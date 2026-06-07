@@ -1,6 +1,101 @@
 .DS_Store
 .gradle
-.idea
 .intellijPlatform
 .kotlin
 build
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# debug information files
+*.dwo
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Added by cargo
+
+/target
+
+# IDE settings
+.idea/
+
+# npm package
+/node_modules
+
+# Mise settings
+mise.toml
+
+# Python settings
+uv.lock
+pyproject.toml
+__pycache__
+
+# Exclude everything below this point from gminiignore
+# local files
+# A folder for storing files you want to manage but not commit
+*.local
+
+# AI files
+*.local.md
+AGENTS.override.md
+
+# Gemini CLI
+.gemini/settings.json
+
+# Codex CLI
+.codex/config.toml
+
+# Junie CLI
+.junie
+
+# Antigravity
+.antigravitycli
+
+# EmEditor SDK Documentation
+/sdk
+
+# Windows sandbox files
+/sandbox
+
+# MemPalace per-project files
+mempalace.yaml
+entities.json
