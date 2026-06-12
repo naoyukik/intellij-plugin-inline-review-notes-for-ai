@@ -10,6 +10,37 @@
 6. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use `CI=true` for watch-mode tools (tests, linters) to ensure single execution.
 7. **Track Naming:** トラック名（およびそのディレクトリ名）のプレフィックス番号は、対応するGitHubのIssue番号（チケット番号）に合わせる（例: Issue #3の場合は `003-xxx` とし、3桁のゼロ埋めとする）。
 
+## Repository Rules
+
+### Language Policy
+
+- Write `spec.md`, `plan.md`, `workflow.md`, reports, and AI conversations in Japanese.
+- Write in-code comments in Japanese only when they explain complex logic.
+- State conclusions first.
+
+### Testing Requirements
+
+- The minimum target is 80% or higher coverage.
+- Provide matching unit tests for each feature.
+- After changes, verify the test results directly and do not treat the task as complete based on inference alone.
+- Run the project's configured static analysis task before each task commit. If `detekt` is available in this repository, run `./gradlew detekt`.
+
+### Commit Strategy
+
+- Commit after each task is completed.
+- Follow the Conventional Commits rules defined in `AGENTS.md` for commit messages.
+
+### Verification Principles
+
+- Do not complete tasks that require "user manual verification" unless the user has explicitly approved them.
+- Even if the implementation looks correct, treat it as incomplete until the behavior has been verified.
+- Do not prioritize efficiency over the prescribed process.
+
+### References
+
+- Kotlin Reference: https://kotlinlang.org/docs/
+- IntelliJ Plugin Reference: https://plugins.jetbrains.com/docs/
+
 ## Task Workflow
 
 All tasks follow a strict lifecycle:
@@ -33,7 +64,7 @@ All tasks follow a strict lifecycle:
    - With the safety of passing tests, refactor the implementation code and the test code to improve clarity, remove duplication, and enhance performance without changing the external behavior.
    - Rerun tests to ensure they still pass after refactoring.
 
-6. **Verify Coverage:** Run coverage reports using the project's chosen tools. For example, in a Python project, this might look like:
+6. **Verify Coverage and Static Analysis:** Run coverage reports using the project's chosen tools and execute the project's configured static analysis task. If `detekt` is available, run `./gradlew detekt`. For example, in a Python project, this might look like:
    ```bash
    pytest --cov=app --cov-report=html
    ```
@@ -48,20 +79,32 @@ All tasks follow a strict lifecycle:
 8. **Commit Code Changes:**
    - Stage all code changes related to the task.
    - Propose a clear, concise commit message e.g, `feat(ui): Create basic HTML structure for calculator`.
-   - Perform the commit.
+   - Perform the commit only after tests and static analysis pass.
 
-9. **Attach Task Summary with Git Notes:**
-   - **Step 9.1: Get Commit Hash:** Obtain the hash of the *just-completed commit* (`git log -1 --format="%H"`).
-   - **Step 9.2: Draft Note Content:** Create a detailed summary for the completed task. This should include the task name, a summary of changes, a list of all created/modified files, and the core "why" for the change.
-   - **Step 9.3: Attach Note:** Use the `git notes` command to attach the summary to the commit.
+9. **Get and Record Task Commit SHA:**
+     - **Step 10.1: Update Plan:** Read `plan.md`, find the line for the completed task, update its status from `[~]` to `[x]`, and append the first 7 characters of the *just-completed commit's* commit hash.
+     - **Step 10.2: Write Plan:** Write the updated content back to `plan.md`.
 
-10. **Get and Record Task Commit SHA:**
-    - **Step 10.1: Update Plan:** Read `plan.md`, find the line for the completed task, update its status from `[~]` to `[x]`, and append the first 7 characters of the *just-completed commit's* commit hash.
-    - **Step 10.2: Write Plan:** Write the updated content back to `plan.md`.
-
-11. **Commit Plan Update:**
+10. **Commit Plan Update:**
     - **Action:** Stage the modified `plan.md` file.
     - **Action:** Commit this change with a descriptive message (e.g., `conductor(plan): Mark task 'Create user model' as complete`).
+
+### Repository-Specific Task Flow
+
+For this repository, the work should usually proceed like this:
+
+1. **Phase 0 - Research and Planning:** Use `autonomous-researcher` to inspect the relevant code, create `evidence_report.md`, and rewrite the remaining items in `plan.md` so they name the concrete files, expected line ranges, and intended changes.
+2. **Per-Task Cycle:** For each implementation task, repeat `実装 -> テスト -> 静的解析 -> コミット`.
+3. **Phase Closeout:** Every phase must end with `Conductor - ユーザー手動検証` and then the phase checkpoint workflow.
+
+### Standard Phase Structure
+
+When a track uses phased delivery, keep the phase structure explicit:
+
+- Phase 0 is Discovery & Detailed Design.
+- Phase 0 should include research, plan refinement, environment confirmation, and the manual verification task.
+- Later phases should contain only the concrete implementation tasks needed for the feature.
+- Each phase closes with `./gradlew test`, the configured static analysis task such as `./gradlew detekt` when available, and manual verification before the phase is marked complete.
 
 ### Phase Completion Verification and Checkpointing Protocol
 
@@ -77,10 +120,10 @@ All tasks follow a strict lifecycle:
         -   For each remaining code file, verify a corresponding test file exists.
         -   If a test file is missing, you **must** create one. Before writing the test, **first, analyze other test files in the repository to determine the correct naming convention and testing style.** The new tests **must** validate the functionality described in this phase's tasks (`plan.md`).
 
-3.  **Execute Automated Tests with Proactive Debugging:**
-    -   Before execution, you **must** announce the exact shell command you will use to run the tests.
-    -   **Example Announcement:** "I will now run the automated test suite to verify the phase. **Command:** `CI=true npm test`"
-    -   Execute the announced command.
+3.  **Execute Automated Tests and Static Analysis with Proactive Debugging:**
+    -   Before execution, you **must** announce the exact shell command or commands you will use to run the tests and static analysis.
+    -   **Example Announcement:** "I will now run the automated test suite and static analysis to verify the phase. **Commands:** `./gradlew test` and `./gradlew detekt`"
+    -   Execute the announced commands.
     -   If tests fail, you **must** inform the user and begin debugging. You may attempt to propose a fix a **maximum of two times**. If the tests still fail after your second proposed fix, you **must stop**, report the persistent failure, and ask the user for guidance.
 
 4.  **Propose a Detailed, Actionable Manual Verification Plan:**
@@ -126,17 +169,19 @@ Before marking any task complete, verify:
 
 ### Setup
 ```bash
-# Example: Commands to set up the development environment (e.g., install dependencies, configure database)
+./gradlew build
 ```
 
 ### Daily Development
 ```bash
-# Example: Commands for common daily tasks (e.g., start dev server, run tests, lint, format)
+./gradlew test
 ```
 
 ### Before Committing
 ```bash
-# Example: Commands to run all pre-commit checks (e.g., format, lint, type check, run tests)
+./gradlew test
+./gradlew detekt
+./gradlew build
 ```
 
 ## Testing Requirements
@@ -146,12 +191,28 @@ Before marking any task complete, verify:
 - Use appropriate test setup/teardown mechanisms (e.g., fixtures, beforeEach/afterEach).
 - Mock external dependencies.
 - Test both success and failure cases.
+- Keep the feature-level tests aligned with the task in `plan.md`.
 
 ### Integration Testing
 - Test complete user flows
 - Verify database transactions
 - Test authentication and authorization
 - Check form submissions
+
+## Track Management
+
+### Track Creation
+
+1. Register the track in `conductor/tracks.md`.
+2. Create `conductor/tracks/<track_id>/`.
+3. Place `index.md`, `spec.md`, `plan.md`, and `metadata.json` in that folder.
+4. Create a Git branch whose name includes `<track_id>`.
+
+### Track Execution
+
+- Use the track's `plan.md` as the source of truth.
+- Keep track names aligned with the issue number prefix convention.
+- Update the plan as work changes, instead of relying on memory or chat history.
 
 ## Code Review Process
 
