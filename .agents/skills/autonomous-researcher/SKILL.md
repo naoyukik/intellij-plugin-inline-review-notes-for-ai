@@ -53,7 +53,7 @@ Conductor において「調査」を目的としたトラック（実装を含�
 
 ### Phase 1: Discovery (要求理解)
 
-**目的**: 何を達成すべきかを明確化する。  
+**目的**: 何を達成すべきかを明確化する。
 **実施内容**:
 
 - 要求を再記述し、解くべき問題を明文化する。
@@ -131,7 +131,7 @@ Conductor において「調査」を目的としたトラック（実装を含�
 
 ## 根拠ベース検証 (Evidence Discipline)
 
-- **Web 検索と Web Fetch の活用**: 外部情報の取得には `google_web_search` や `microsoft_docs_search` などの検索ツールを積極的に使用し、必要に応じて `web_fetch` や `microsoft_docs_fetch` で詳細な仕様を確認せよ。これにより、ローカルの知識だけでなく最新かつ公式な情報を反映させること。
+- **Web 検索と Web Fetch の活用**: 外部情報の取得には `google_web_search` などの検索ツールを積極的に使用し、必要に応じて `web_fetch` で詳細な仕様を確認せよ。これにより、ローカルの知識だけでなく最新かつ公式な情報を反映させること。
 - 外部仕様は必ず 1 次ソースを優先する（Learn Microsoft, docs.rs, RFC, 公式リポジトリ, Web等の公式リファレンス）。
 - 調査時は `references/research_guidelines.md` のクエリとチェック項目を使う。
 - 参照 URL と調査日、重要事実、制約、破壊的変更の有無を記録する。
@@ -154,11 +154,10 @@ Conductor の spec/plan がある場合は、その近傍に `evidence_report.md
 
 - **積極的な情報収集**: 不明点や外部 API の挙動については、自身の知識に頼らず Web 検索ツールを活用して裏付けを取ること。
 - **"I don't know" を恐れない**: 調査で確証が得られない場合、推測でコードを書くのではなく、不足している情報をユーザーに報告し、さらなる調査方針を相談する。
-- **1次ソースを優先する**: ブログ記事や Stack Overflow よりも、公式ドキュメント（Learn Microsoft, docs.rs, RFC）を優先的に参照する。
+- **1次ソースを優先する**: ブログ記事や Stack Overflow よりも、公式ドキュメント（Kotlin, docs.rs, RFC）を優先的に参照する。
 - **Regressions への警戒**: ライブラリのバージョンアップによる破壊的変更や、OSの挙動変更がないか、GitHub Issue やリリースノートを検索する。
 
 ## リソース
 
 - **`references/research_guidelines.md`**: 効果的な検索クエリとチェックリスト。
-- **`references/emeditor_sdk.md`**: EmEditor SDK 固有の注意点と既知仕様。
 - **`assets/evidence_report_template.md`**: 実装前調査レポートのテンプレート。
