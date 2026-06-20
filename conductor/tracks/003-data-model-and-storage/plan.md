@@ -27,3 +27,6 @@
 - [x] Task: Conductor - `./gradlew build` を実行してビルドと全テストの成功を確認。
 - [x] Task: Conductor - 成果の検証とレビュー
 - [x] Task: Conductor - 成果をコミット (`feat(storage): Implement ReviewComment data model and storage`)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions 2a7d132
