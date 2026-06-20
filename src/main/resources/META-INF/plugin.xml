@@ -4,8 +4,8 @@
     <name>Inline Review Notes for AI</name>
     <vendor>naoyukik</vendor>
     <description><![CDATA[
-        <p><b>inline-review-notes-for-ai</b> is a repository that provides a pure template to make it easier to create a new plugin project.</p>
-        <p>The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.</p>
+        <p><b>Inline Review Notes for AI</b> allows you to add and manage inline review comments for your local files.</p>
+        <p>Comments are stored as JSON files on a per-branch basis in the <code>.inline-review-notes/</code> directory, making them easy for AI tools to read and process without cluttering your source code.</p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>

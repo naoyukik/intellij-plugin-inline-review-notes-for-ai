@@ -86,18 +86,22 @@ class ReviewCommentStorage(
     }
 
     private fun resolveGitBranch(projectRoot: Path): String? {
-        val process = ProcessBuilder("git", "-C", projectRoot.toString(), "rev-parse", "--abbrev-ref", "HEAD")
-            .redirectErrorStream(true)
-            .start()
+        return try {
+            val process = ProcessBuilder("git", "-C", projectRoot.toString(), "rev-parse", "--abbrev-ref", "HEAD")
+                .redirectErrorStream(true)
+                .start()
 
-        val output = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader -> reader.readText().trim() }
-        val exitCode = process.waitFor()
+            val output = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader -> reader.readText().trim() }
+            val exitCode = process.waitFor()
 
-        if (exitCode != 0 || output.isBlank() || output == DETACHED_HEAD) {
-            return null
+            if (exitCode != 0 || output.isBlank() || output == DETACHED_HEAD) {
+                null
+            } else {
+                output
+            }
+        } catch (e: Exception) {
+            null
         }
-
-        return output
     }
 
     companion object {
