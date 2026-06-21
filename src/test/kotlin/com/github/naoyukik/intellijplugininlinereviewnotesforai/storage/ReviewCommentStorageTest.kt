@@ -3,13 +3,13 @@ package com.github.naoyukik.intellijplugininlinereviewnotesforai.storage
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewComment
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewCommentDocument
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.nio.file.Files
-import java.nio.file.Path
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
+import kotlin.text.Charsets
 
 class ReviewCommentStorageTest {
 
@@ -34,7 +34,7 @@ class ReviewCommentStorageTest {
     @Test
     fun save_writes_json_and_updates_gitignore_once() {
         val projectRoot = temporaryFolder.root.toPath()
-        Files.writeString(projectRoot.resolve(".gitignore"), "build/\n")
+        projectRoot.resolve(".gitignore").writeText("build/\n")
         val storage = ReviewCommentStorage(
             projectRoot = projectRoot,
             branchNameProvider = { "bug/fix#123" },
@@ -57,10 +57,10 @@ class ReviewCommentStorageTest {
         storage.save(document)
 
         val storageFile = projectRoot.resolve(".inline-review-notes").resolve("bug_fix_123.json")
-        assertTrue(Files.exists(storageFile))
+        assertTrue(storageFile.readText(Charsets.UTF_8).isNotBlank())
         assertEquals(document, storage.load())
 
-        val gitignoreContent = Files.readString(projectRoot.resolve(".gitignore"))
+        val gitignoreContent = projectRoot.resolve(".gitignore").readText()
         assertTrue(gitignoreContent.contains(".inline-review-notes/"))
         assertEquals(1, gitignoreContent.lineSequence().count { it == ".inline-review-notes/" })
     }
