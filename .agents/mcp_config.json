@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "jetbrains": {
+      "serverUrl": "http://localhost:64421/stream",
+      "headers": {
+        "IJ_MCP_SERVER_PROJECT_PATH": "Z:/projects/intellij-plugin-inline-review-notes-for-ai"
+      }
+    },
+    "mempalace": {
+      "command": "mempalace-mcp"
+    },
+    "context7": {
+      "command": "pnpm",
+      "args": ["dlx", "@upstash/context7-mcp@3.2.1"]
+    }
+  }
+}
