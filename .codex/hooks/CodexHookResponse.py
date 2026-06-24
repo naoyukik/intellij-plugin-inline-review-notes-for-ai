@@ -25,15 +25,19 @@ class CodexHookResponse:
     stopReason: Optional[str] = None
     systemMessage: Optional[str] = None
     suppressOutput: bool = False
+    hookSpecificOutput: Optional[dict] = None
 
     def to_dict(self) -> dict:
         """Return a JSON‑serialisable dict (converts the `continue_` field)."""
-        return {
+        res = {
             "continue": self.continue_,
             "stopReason": self.stopReason,
             "systemMessage": self.systemMessage,
             "suppressOutput": self.suppressOutput,
         }
+        if self.hookSpecificOutput is not None:
+            res["hookSpecificOutput"] = self.hookSpecificOutput
+        return res
 
     def to_json(self) -> str:
         """Serialize the object to a JSON string."""
@@ -47,6 +51,7 @@ class CodexHookResponse:
             stopReason=data.get("stopReason"),
             systemMessage=data.get("systemMessage"),
             suppressOutput=data.get("suppressOutput", False),
+            hookSpecificOutput=data.get("hookSpecificOutput"),
         )
 
     @staticmethod
@@ -62,6 +67,7 @@ if __name__ == "__main__":
         stopReason=None,
         systemMessage=None,
         suppressOutput=False,
+        hookSpecificOutput={"additionalContext": "test"},
     )
     print("Serialized →", example.to_json())
     # round‑trip test

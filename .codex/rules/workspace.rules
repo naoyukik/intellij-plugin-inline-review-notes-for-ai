@@ -41,6 +41,14 @@ prefix_rule(
     ]
 )
 
+
+# Automatically allow safe build/check commands
+prefix_rule(
+    pattern = ["./gradlew.bat", ["test", "build", "detekt"]],
+    decision = "allow",
+    justification = "git add -u の使用はプロジェクト規約により厳禁されている。ファイルを個別に指定せよ。",
+)
+
 # Automatically allow common utility commands
 prefix_rule(
     pattern = [["ls", "dir", "cat", "tail", "mkdir", "Test-Path", "Get-Content", "Get-Item"]],
