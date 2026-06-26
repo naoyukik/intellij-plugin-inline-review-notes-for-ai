@@ -6,7 +6,7 @@ import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.text.Charsets
-import java.nio.file.NoSuchFileException
+import java.io.IOException
 import java.nio.file.Path
 
 /**
@@ -22,9 +22,10 @@ class ReviewCommentStorage(
     private val json: Json = Json {
         prettyPrint = true
         encodeDefaults = true
-        ignoreUnknownKeys = false
+        ignoreUnknownKeys = true
         explicitNulls = true
     },
+    private val readTextFn: (Path) -> String? = ::readTextOrNull,
 ) {
 
     /**
@@ -76,10 +77,14 @@ class ReviewCommentStorage(
      * @return 読み込まれた [ReviewCommentDocument]。
      */
     fun load(): ReviewCommentDocument =
-        resolveStorageFilePath()
-            .readTextOrNull()
-            ?.let { json.decodeFromString(ReviewCommentDocument.serializer(), it) }
-            ?: ReviewCommentDocument()
+        try {
+            resolveStorageFilePath()
+                .let(readTextFn)
+                ?.let { json.decodeFromString(ReviewCommentDocument.serializer(), it) }
+                ?: ReviewCommentDocument()
+        } catch (_: IOException) {
+            ReviewCommentDocument()
+        }
 
     /**
      * レビューコメントの保存。
@@ -101,7 +106,7 @@ class ReviewCommentStorage(
 
     private fun ensureGitignoreEntry() {
         val gitignoreFile = projectRoot.resolve(GITIGNORE_FILE)
-        val currentContent = gitignoreFile.readTextOrNull()
+        val currentContent = readTextOrNull(gitignoreFile)
 
         when {
             currentContent == null -> gitignoreFile.writeText("$GITIGNORE_ENTRY${System.lineSeparator()}", Charsets.UTF_8)
@@ -140,13 +145,6 @@ class ReviewCommentStorage(
             null
         }
 
-    private fun Path.readTextOrNull(): String? =
-        try {
-            readText(Charsets.UTF_8)
-        } catch (_: NoSuchFileException) {
-            null
-        }
-
     companion object {
         private const val STORAGE_DIRECTORY = ".inline-review-notes"
         private const val GITIGNORE_FILE = ".gitignore"
@@ -155,3 +153,10 @@ class ReviewCommentStorage(
         private const val DETACHED_HEAD = "HEAD"
     }
 }
+
+private fun readTextOrNull(path: Path): String? =
+    try {
+        path.readText(Charsets.UTF_8)
+    } catch (_: IOException) {
+        null
+    }
