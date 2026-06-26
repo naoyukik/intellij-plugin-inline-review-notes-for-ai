@@ -1,6 +1,6 @@
 ---
 name: operating-git
-description: Gitワークフローの詳細なコマンド実行とトラブルシューティング。ステージングの原則は AGENTS.md を参照せよ。
+description: Be sure to refer to this when using Git commands. Detailed instructions on executing commands and troubleshooting Git workflows.
 ---
 
 # Operating Git - Procedure & Examples

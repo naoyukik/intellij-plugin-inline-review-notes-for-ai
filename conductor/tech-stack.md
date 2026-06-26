@@ -13,6 +13,9 @@
 - JUnit 4.13.2
 - IntelliJ Platform Test Framework
 
+## データ保存
+- kotlinx.serialization
+
 ## 既存の主要構成
 - ToolWindow
 - ProjectActivity
@@ -22,4 +25,5 @@
 
 ## 備考
 - 現時点では外部データベースは使っていない
+- ブランチ名取得は Git CLI を利用し、取得できない場合は `default` にフォールバックする
 - 現在のコードは IntelliJ Platform のテンプレート構成をベースにしている
