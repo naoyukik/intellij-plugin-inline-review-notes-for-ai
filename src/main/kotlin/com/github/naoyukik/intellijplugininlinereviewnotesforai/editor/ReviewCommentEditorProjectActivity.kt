@@ -15,11 +15,10 @@ class ReviewCommentEditorProjectActivity : ProjectActivity, DumbAware {
                 return@invokeLater
             }
 
-            val listener = ReviewCommentEditorFactoryListener()
             EditorFactory.getInstance().allEditors
                 .asSequence()
                 .filter { it.project == project }
-                .forEach(listener::track)
+                .forEach(ReviewCommentEditorTracker::track)
         }, ModalityState.any())
     }
 }
