@@ -1,6 +1,6 @@
 # Plan: GutterIconによるコメント追加トリガーとActionの実装
 
-## Phase 0: 調査と詳細設計
+## Phase 0: 調査と詳細設計 [checkpoint: bba9711]
 
 - [x] Task: Issue #4、既存コード、Conductor 文書を再確認し、実装対象を確定する。
   - [x] `src/main/resources/META-INF/plugin.xml:1-27` の現状を確認する。
