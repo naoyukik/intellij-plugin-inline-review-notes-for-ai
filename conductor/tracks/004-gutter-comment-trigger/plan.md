@@ -15,7 +15,7 @@
   - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentLineRange.kt:1-12` と `ReviewCommentLineRangeResolver.kt:1-10` を UI 非依存の行範囲算出に使う。
   - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorLineRangeResolver.kt:1-18` を editor 由来の selection / caret 変換に使う。
   - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentGutterIconRenderer.kt:1-42` をクリック処理と tooltip 表示に使う。
-  - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorFactoryListener.kt:1-92` を editor lifecycle と highlighter 破棄に使う。
+  - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorTracker.kt:1-95` を editor lifecycle と highlighter 破棄に使う。
   - [x] `src/main/resources/META-INF/plugin.xml:1-27` に resource bundle / action / listener を登録する。
   - [x] `src/main/resources/messages/MyBundle.properties:1-5` にユーザー向け文言を置く。
   - [x] `src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentLineRangeResolverTest.kt:1-31` と `src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/action/AddReviewCommentPresentationTest.kt:1-19` で純粋ロジックを検証する。
