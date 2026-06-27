@@ -60,8 +60,8 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)
 - [x] Task: Conductor - 'Phase 2' の成果をコミット
 
-## Phase 3: Review Fixes
+## Phase 3: Review Fixes [checkpoint: 10b0233]
 
-- [ ] Task: `ReviewCommentEditorFactoryListener` と `ReviewCommentEditorProjectActivity` の所有権を統一し、起動時に既存エディタを追跡しても同じ listener / disposer で解放されるようにする。
-- [ ] Task: `ReviewCommentEditorLineRangeResolver` の unit test を追加し、selection の行境界や逆順入力を検証する。
+- [x] Task: `ReviewCommentEditorFactoryListener` と `ReviewCommentEditorProjectActivity` の所有権を統一し、起動時に既存エディタを追跡しても同じ listener / disposer で解放されるようにする。
+- [x] Task: `ReviewCommentEditorLineRangeResolver` の unit test を追加し、selection の行境界や逆順入力を検証する。
 
