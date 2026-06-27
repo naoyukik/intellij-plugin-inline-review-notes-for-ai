@@ -49,7 +49,7 @@
   - [ ] `src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorFactoryListenerTest.kt` を追加し、caret / selection 更新で古い表示が置き換わるケースを固定する。
 - [x] Task: ガター表示を管理するコンポーネントを実装する。
   - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentGutterIconRenderer.kt:1-42` で「＋」アイコンの click / tooltip を担う。
-  - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorFactoryListener.kt:1-92` で highlighter の更新と破棄を担う。
+  - [x] `src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ReviewCommentEditorTracker.kt:1-95` で highlighter の更新と破棄を担う。
   - [x] 追加の controller は原則として作らず、listener と renderer の最小構成で状態管理する。
 - [x] Task: エディタイベント購読を実装する。
   - [x] `SelectionListener` と `CaretListener` により選択範囲・カーソル移動へ追従する。
