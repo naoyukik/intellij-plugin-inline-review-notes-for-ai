@@ -3,11 +3,29 @@
     <id>com.github.naoyukik.intellijplugininlinereviewnotesforai</id>
     <name>Inline Review Notes for AI</name>
     <vendor>naoyukik</vendor>
+    <resource-bundle>messages.MyBundle</resource-bundle>
     <description><![CDATA[
         <p><b>Inline Review Notes for AI</b> allows you to add and manage inline review comments for your local files.</p>
         <p>Comments are stored as JSON files on a per-branch basis in the <code>.inline-review-notes/</code> directory, making them easy for AI tools to read and process without cluttering your source code.</p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+
+    <applicationListeners>
+        <listener class="com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ReviewCommentEditorFactoryListener" topic="com.intellij.openapi.editor.event.EditorFactoryListener"/>
+    </applicationListeners>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ReviewCommentEditorProjectActivity"/>
+    </extensions>
+
+    <actions>
+        <action id="AddReviewCommentAction"
+                class="com.github.naoyukik.intellijplugininlinereviewnotesforai.action.AddReviewCommentAction"
+                text="Add review comment"
+                description="Start adding a review comment from the current line or selection.">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+    </actions>
 
 </idea-plugin>
