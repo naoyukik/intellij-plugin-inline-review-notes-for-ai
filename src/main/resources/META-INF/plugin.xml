@@ -22,8 +22,8 @@
     <actions>
         <action id="AddReviewCommentAction"
                 class="com.github.naoyukik.intellijplugininlinereviewnotesforai.action.AddReviewCommentAction"
-                text="Add review comment"
-                description="Start adding a review comment from the current line or selection.">
+                text="%action.AddReviewCommentAction.text"
+                description="%action.AddReviewCommentAction.description">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
     </actions>
