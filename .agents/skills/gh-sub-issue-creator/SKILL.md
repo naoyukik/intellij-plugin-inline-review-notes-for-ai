@@ -19,7 +19,7 @@ Before calling `sub_issue_write`, you must retrieve the internal numeric `id` (N
 Call `issue_read` with the `method: "get"` and the human-readable `issue_number` of the **child** issue.
 The output will contain an `"id"` field with a large numeric value.
 
-```json
+```json55
 // Example: Get info for issue #74
 {
   "owner": "naoyukik",
@@ -48,7 +48,7 @@ gh api graphql -f query='
 
 ### Method C: When Creating a New Issue
 If you just created the issue using `issue_write`, the output already contains the `id`.
-```json
+```json5
 {"id":"3971828927","url":"..."}
 ```
 
@@ -58,7 +58,7 @@ If you just created the issue using `issue_write`, the output already contains t
 
 Once you have the internal `id`, call the `sub_issue_write` tool.
 
-```json
+```json5
 // Correct Example
 {
   "owner": "naoyukik",
@@ -67,7 +67,9 @@ Once you have the internal `id`, call the `sub_issue_write` tool.
   "sub_issue_id": 3971828927,// The internal ID of the CHILD issue
   "method": "add"
 }
+```
 
+```json5
 // INCORRECT Example (Will result in 404 error)
 {
   "owner": "naoyukik",
