@@ -23,7 +23,7 @@ The output will contain an `"id"` field with a large numeric value.
 // Example: Get info for issue #74
 {
   "owner": "naoyukik",
-  "repo": "emeditor-terminal",
+  "repo": "intellij-plugin-inline-review-notes-for-ai",
   "issue_number": 74,
   "method": "get"
 }
@@ -42,7 +42,7 @@ gh api graphql -f query='
     repository(owner: $owner, name: $repo) {
       issue(number: $number) { id }
     }
-  }' -f owner='naoyukik' -f repo='emeditor-terminal' -F number=ISSUE_NUMBER
+  }' -f owner='naoyukik' -f repo='intellij-plugin-inline-review-notes-for-ai' -F number=ISSUE_NUMBER
 ```
 2. **内容取得**: `run_shell_command` の実行結果（例: `{"data":{"repository":{"issue":{"id":"I_..."}}}}`）から ID を取得する。
 
@@ -62,7 +62,7 @@ Once you have the internal `id`, call the `sub_issue_write` tool.
 // Correct Example
 {
   "owner": "naoyukik",
-  "repo": "emeditor-terminal",
+  "repo": "intellij-plugin-inline-review-notes-for-ai",
   "issue_number": 73,        // The human-readable number of the PARENT issue
   "sub_issue_id": 3971828927,// The internal ID of the CHILD issue
   "method": "add"
@@ -71,7 +71,7 @@ Once you have the internal `id`, call the `sub_issue_write` tool.
 // INCORRECT Example (Will result in 404 error)
 {
   "owner": "naoyukik",
-  "repo": "emeditor-terminal",
+  "repo": "intellij-plugin-inline-review-notes-for-ai",
   "issue_number": 73,
   "sub_issue_id": 74,        // ERROR: Do not use the issue number here!
   "method": "add"
@@ -92,7 +92,7 @@ Once you have the internal `id`, call the `sub_issue_write` tool.
            subIssues(first: 10) { nodes { number } }
          }
        }
-     }' -f owner='naoyukik' -f repo='emeditor-terminal' -F number=PARENT_NUMBER
+     }' -f owner='naoyukik' -f repo='intellij-plugin-inline-review-notes-for-ai' -F number=PARENT_NUMBER
    ```
 
 2. **GitHub GraphQL API でサブイシューを追加する**:
