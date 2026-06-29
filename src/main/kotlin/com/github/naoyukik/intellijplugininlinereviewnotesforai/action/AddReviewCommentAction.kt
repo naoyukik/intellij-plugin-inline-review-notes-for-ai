@@ -20,6 +20,7 @@ class AddReviewCommentAction : AnAction(), DumbAware {
     override fun update(event: AnActionEvent) {
         val editor = event.getData(CommonDataKeys.EDITOR)
         val file = event.getData(CommonDataKeys.VIRTUAL_FILE)
+            ?: editor?.let { FileDocumentManager.getInstance().getFile(it.document) }
         event.presentation.isEnabledAndVisible = editor != null && file != null
     }
 
