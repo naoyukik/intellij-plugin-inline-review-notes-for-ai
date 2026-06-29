@@ -22,8 +22,8 @@ class ReviewCommentSerializationTest {
                     comment = "ここを修正すべきだ。",
                     createdAt = "2026-06-19T10:00:00+09:00",
                     resolvedAt = null,
-                )
-            )
+                ),
+            ),
         )
 
         val encoded = json.encodeToString(ReviewCommentDocument.serializer(), original)

@@ -29,17 +29,23 @@ object ReviewCommentEditorTracker {
         val state = EditorState()
         editorStates[editor] = state
 
-        editor.caretModel.addCaretListener(object : CaretListener {
-            override fun caretPositionChanged(event: CaretEvent) {
-                refresh(editor)
-            }
-        }, state.disposable)
+        editor.caretModel.addCaretListener(
+            object : CaretListener {
+                override fun caretPositionChanged(event: CaretEvent) {
+                    refresh(editor)
+                }
+            },
+            state.disposable,
+        )
 
-        editor.selectionModel.addSelectionListener(object : SelectionListener {
-            override fun selectionChanged(event: SelectionEvent) {
-                refresh(editor)
-            }
-        }, state.disposable)
+        editor.selectionModel.addSelectionListener(
+            object : SelectionListener {
+                override fun selectionChanged(event: SelectionEvent) {
+                    refresh(editor)
+                }
+            },
+            state.disposable,
+        )
 
         refresh(editor)
     }

@@ -2,12 +2,12 @@ package com.github.naoyukik.intellijplugininlinereviewnotesforai.storage
 
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewCommentDocument
 import kotlinx.serialization.json.Json
+import java.io.IOException
+import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.text.Charsets
-import java.io.IOException
-import java.nio.file.Path
 
 /**
  * インラインレビューコメントをJSON形式で保存・読み込みするためのストレージクラス。
@@ -109,7 +109,10 @@ class ReviewCommentStorage(
         val currentContent = readTextOrNull(gitignoreFile)
 
         when {
-            currentContent == null -> gitignoreFile.writeText("$GITIGNORE_ENTRY${System.lineSeparator()}", Charsets.UTF_8)
+            currentContent == null -> gitignoreFile.writeText(
+                "$GITIGNORE_ENTRY${System.lineSeparator()}",
+                Charsets.UTF_8,
+            )
             currentContent.lineSequence().any { it.trim() == GITIGNORE_ENTRY } -> Unit
             else -> gitignoreFile.writeText(
                 buildString {
