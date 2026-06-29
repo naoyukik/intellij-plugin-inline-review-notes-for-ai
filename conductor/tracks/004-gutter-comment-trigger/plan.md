@@ -64,4 +64,6 @@
 
 - [x] Task: `ReviewCommentEditorFactoryListener` と `ReviewCommentEditorProjectActivity` の所有権を統一し、起動時に既存エディタを追跡しても同じ listener / disposer で解放されるようにする。
 - [x] Task: `ReviewCommentEditorLineRangeResolver` の unit test を追加し、selection の行境界や逆順入力を検証する。
+- [ ] Task: `AddReviewCommentAction.update()` で `CommonDataKeys.VIRTUAL_FILE` が見つからない場合も `FileDocumentManager` からファイル解決を試みるように修正し、アクションの有効化判定を `actionPerformed()` と統一する。
+
 
