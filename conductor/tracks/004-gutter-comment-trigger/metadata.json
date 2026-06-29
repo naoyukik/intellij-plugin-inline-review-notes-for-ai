@@ -1,0 +1,8 @@
+{
+  "track_id": "004-gutter-comment-trigger",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-06-26T12:27:16.4718597Z",
+  "updated_at": "2026-06-26T12:27:16.4718597Z",
+  "description": "GitHub Issue 4: GutterIconによるコメント追加トリガーとActionの実装"
+}

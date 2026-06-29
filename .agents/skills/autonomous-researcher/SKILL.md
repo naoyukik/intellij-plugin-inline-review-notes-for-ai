@@ -1,6 +1,6 @@
 ---
 name: autonomous-researcher
-description: Execute a pre-implementation investigation workflow modeled on feature-dev Phase 1-4 (Discovery, Codebase Exploration, Clarifying Questions, Architecture Design). Use this when requirements are ambiguous, architecture decisions are needed, or external validation (Win32 API, Rust crates, EmEditor SDK) is required before coding in Conductor tracks.
+description: Execute a pre-implementation investigation workflow modeled on feature-dev Phase 1-4 (Discovery, Codebase Exploration, Clarifying Questions, Architecture Design). Use this when requirements are ambiguous, architecture decisions are needed, or external validation (Kotlin, JetBrains Plugin SDK) is required before coding in Conductor tracks.
 ---
 
 # Autonomous Researcher
@@ -25,7 +25,7 @@ Conductor において「調査」を目的としたトラック（実装を含�
 
 - Phase 3 の質問が未解決のまま Phase 4 に進んではならない。  
   例外は、ユーザーが「判断を委任する」と明示した場合のみである。
-- EmEditor SDK を扱う場合は `references/emeditor_sdk.md` を先に確認すること。
+- SDKやKotlinの調査を行う際には、Context7 MCPを活用して調査をすること。
 - 調査ログは `assets/evidence_report_template.md` に従って記録すること。
 
 ### Sequential Thinking 連携規約

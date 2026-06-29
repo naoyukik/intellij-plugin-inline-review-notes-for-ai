@@ -12,8 +12,7 @@ description: Analyzing GitHub Pull Request review comments and managing follow-u
 # レビューコメントの取得方法 (GitHub-Efficiency)
 情報の正確な取得とコンテキスト（トークン）効率を最大化するため、以下の手順で GraphQL を使用してください。
 
-1. **コマンド実行**: `run_shell_command` を使用し、直接 `gh api graphql` を実行して情報を取得します。
-  - 以前のように JSON ファイルを作成したり、`cmd /c` を介したりする必要はありません。
+1. **コマンド実行**: `gh api graphql` を実行して情報を取得します。
 
 ```powershell
 gh api graphql -f query='
@@ -29,7 +28,7 @@ gh api graphql -f query='
         }
       }
     }
-  }' -f owner='naoyukik' -f name='emeditor-terminal' -F pr=PULL_NUMBER
+  }' -f owner='naoyukik' -f name='intellij-plugin-inline-review-notes-for-ai' -F pr=PULL_NUMBER
 ```
 
 2. **内容確認**: `run_shell_command` の実行結果から、レビュー内容を直接確認してください。

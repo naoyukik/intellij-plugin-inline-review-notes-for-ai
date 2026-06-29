@@ -19,7 +19,7 @@ description: "Draft PRを作成する"
 2. Issueの確認 (GraphQL-Scalpel)
 チケット番号が存在する場合、Issueの内容を確認するため、必ず以下の **GraphQL-Scalpel** プロトコルを使用して情報を取得すること。
 
-    - **情報取得**: `gh api graphql -f query='query($owner: String!, $name: String!, $num: Int!) { repository(owner: $owner, name: $name) { issue(number: $num) { title body } } }' -f owner='naoyukik' -f name='emeditor-terminal' -F num=TICKET_NUMBER` を実行し、背景情報を抽出する。
+    - **情報取得**: `gh api graphql -f query='query($owner: String!, $name: String!, $num: Int!) { repository(owner: $owner, name: $name) { issue(number: $num) { title body } } }' -f owner='naoyukik' -f name='intellij-plugin-inline-review-notes-for-ai' -F num=TICKET_NUMBER` を実行し、背景情報を抽出する。
 
 3. 推論と構築 (Reasoning)
 取得した情報を以下の優先順位で統合し、PRの内容を構築せよ。
