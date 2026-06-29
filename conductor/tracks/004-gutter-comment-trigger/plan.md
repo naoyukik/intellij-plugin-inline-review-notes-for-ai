@@ -39,7 +39,7 @@
 - [x] Task: `plugin.xml` に `AddReviewCommentAction` を登録する。
   - [x] `src/main/resources/META-INF/plugin.xml:1-27` に最小限の `<actions>` を追加し、`EditorPopupMenu` から呼べるようにする。
 - [x] Task: `./gradlew test` を実行し、Phase 1 のテスト成功を確認する。
-- [ ] Task: `detekt` が利用可能なら `./gradlew detekt` を実行し、未定義なら未実施理由を記録する。
+- [x] Task: `detekt` はプロジェクトに未導入のためスキップ。
 - [ ] Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)
 - [ ] Task: Conductor - 'Phase 1' の成果をコミット
 
@@ -64,6 +64,6 @@
 
 - [x] Task: `ReviewCommentEditorFactoryListener` と `ReviewCommentEditorProjectActivity` の所有権を統一し、起動時に既存エディタを追跡しても同じ listener / disposer で解放されるようにする。
 - [x] Task: `ReviewCommentEditorLineRangeResolver` の unit test を追加し、selection の行境界や逆順入力を検証する。
-- [ ] Task: `AddReviewCommentAction.update()` で `CommonDataKeys.VIRTUAL_FILE` が見つからない場合も `FileDocumentManager` からファイル解決を試みるように修正し、アクションの有効化判定を `actionPerformed()` と統一する。
+- [x] Task: `AddReviewCommentAction.update()` で `CommonDataKeys.VIRTUAL_FILE` が見つからない場合も `FileDocumentManager` からファイル解決を試みるように修正し、アクションの有効化判定を `actionPerformed()` と統一する。 [575fe5f]
 
 
