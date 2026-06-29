@@ -1,0 +1,12 @@
+[versions]
+# libraries
+detekt-formatting = "1.23.8"
+
+# plugins
+detekt = "1.23.8"
+
+[libraries]
+detektFormatting = {group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt-formatting"}
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
