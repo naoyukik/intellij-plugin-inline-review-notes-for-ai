@@ -3,7 +3,6 @@ package com.github.naoyukik.intellijplugininlinereviewnotesforai.action
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class AddReviewCommentActionTest : BasePlatformTestCase() {

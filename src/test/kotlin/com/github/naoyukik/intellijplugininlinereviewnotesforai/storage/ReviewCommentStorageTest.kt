@@ -50,8 +50,8 @@ class ReviewCommentStorageTest {
                     comment = "ここを調整する。",
                     createdAt = "2026-06-19T10:00:00+09:00",
                     resolvedAt = null,
-                )
-            )
+                ),
+            ),
         )
 
         storage.save(document)
@@ -100,8 +100,8 @@ class ReviewCommentStorageTest {
                     comment = "ここを調整する。",
                     createdAt = "2026-06-19T10:00:00+09:00",
                     resolvedAt = null,
-                )
-            )
+                ),
+            ),
         )
 
         storageFile.writeText(
