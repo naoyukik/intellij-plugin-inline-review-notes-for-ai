@@ -42,8 +42,8 @@
         - `paint(inlay, g, targetRegion, textAttributes)`: 丸角ボックスとテキストを描画
         - `mousePressed` イベントで `onClick()` を呼ぶ（`EditorCustomElementRenderer.mousePressed` オーバーライド）
     - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: CommentInputPanel & Inlay Infrastructure' (Protocol in workflow.md)
-- [ ] Task: Phase 1 コミットし、本フェーズを完了とする
+- [x] Task: Conductor - User Manual Verification 'Phase 1: CommentInputPanel & Inlay Infrastructure' (Protocol in workflow.md)
+- [x] Task: Phase 1 コミットし、本フェーズを完了とする [checkpoint: 03f5c8d]
 
 ## Phase 2: Interaction Logic
 <!-- 新規ファイル: src/main/kotlin/.../editor/CommentInlayManager.kt -->
@@ -70,9 +70,9 @@
     - [x] Task: 右クリックメニュー（AddReviewCommentAction）からエディタ上のインライン入力パネルを呼び出すように変更する
         - [x] `src/test/kotlin/.../action/AddReviewCommentActionTest.kt` に、アクション実行時に `CommentInlayManager.openInputPanel` が呼び出されること、および既存のダイアログ表示が削除されていることを検証するテストを記述する（TDD Red Phase）
         - [x] `src/main/kotlin/.../action/AddReviewCommentAction.kt` を変更して `CommentInlayManager.openInputPanel` を呼び出すようにし、テストをパスさせる（TDD Green Phase）
-    - [ ] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Interaction Logic' (Protocol in workflow.md)
-- [ ] Task: Phase 2 をコミットし、本フェーズを完了とする
+    - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Interaction Logic' (Protocol in workflow.md)
+- [x] Task: Phase 2 をコミットし、本フェーズを完了とする [checkpoint: 03f5c8d]
 
 ## Phase 3: Storage Integration
 <!-- 変更ファイル: src/main/kotlin/.../editor/CommentInlayManager.kt (Save/Delete でストレージ連携) -->
