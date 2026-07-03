@@ -1,14 +1,12 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.MyBundle
-import com.github.naoyukik.intellijplugininlinereviewnotesforai.action.AddReviewCommentPresentation
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 
 class ReviewCommentGutterIconRenderer(
     private val project: Project?,
@@ -20,11 +18,8 @@ class ReviewCommentGutterIconRenderer(
 
     override fun getClickAction(): AnAction = object : AnAction(), DumbAware {
         override fun actionPerformed(e: AnActionEvent) {
-            Messages.showInfoMessage(
-                project,
-                AddReviewCommentPresentation.buildPreviewMessage(filePath, lineRange),
-                MyBundle.message("add.review.comment.dialog.title"),
-            )
+            val editor = e.getData(com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR) ?: return
+            CommentInlayManager.openInputPanel(editor, lineRange, null)
         }
     }
 

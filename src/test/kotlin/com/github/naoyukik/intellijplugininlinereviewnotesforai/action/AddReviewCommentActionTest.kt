@@ -1,5 +1,6 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.action
 
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.CommentInlayManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
@@ -32,7 +33,6 @@ class AddReviewCommentActionTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val action = AddReviewCommentAction()
 
-        // CommonDataKeys.VIRTUAL_FILE is intentionally null, but EDITOR is provided
         val dataContext = DataContext { dataId ->
             when (dataId) {
                 CommonDataKeys.EDITOR.name -> editor
@@ -44,7 +44,28 @@ class AddReviewCommentActionTest : BasePlatformTestCase() {
 
         action.update(event)
 
-        // Before fix, this assertion should fail because event.presentation.isEnabledAndVisible will be false
         assertTrue(event.presentation.isEnabledAndVisible)
+    }
+
+    fun test_action_performed_opens_comment_input_panel() {
+        myFixture.configureByText("Foo.kt", "code")
+        val editor = myFixture.editor
+        val file = myFixture.file.virtualFile
+        val action = AddReviewCommentAction()
+
+        val dataContext = DataContext { dataId ->
+            when (dataId) {
+                CommonDataKeys.EDITOR.name -> editor
+                CommonDataKeys.VIRTUAL_FILE.name -> file
+                else -> null
+            }
+        }
+        val event = AnActionEvent.createFromAnAction(action, null, "place", dataContext)
+
+        assertFalse(CommentInlayManager.hasInputPanel(editor))
+
+        action.actionPerformed(event)
+
+        assertTrue(CommentInlayManager.hasInputPanel(editor))
     }
 }
