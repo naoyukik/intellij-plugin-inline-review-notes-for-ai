@@ -89,4 +89,24 @@
         - `createdAt` は `java.time.OffsetDateTime.now()` を ISO 8601 フォーマットで文字列化
     - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Storage Integration' (Protocol in workflow.md)
-- [ ] Task: Phase 3 をコミットし、本フェーズを完了とする
+- [x] Task: Phase 3 をコミットし、本フェーズを完了とする [checkpoint: 863ab92]
+
+## Phase 4: 複数コメント表示の不具合修正
+<!-- 変更ファイル: src/main/kotlin/.../editor/CommentInlayManager.kt -->
+<!-- 変更ファイル: src/main/kotlin/.../editor/ReviewCommentEditorTracker.kt -->
+<!-- 変更ファイル: src/main/kotlin/.../editor/ReviewCommentEditorProjectActivity.kt -->
+<!-- 変更テスト: src/test/kotlin/.../editor/CommentInlayManagerTest.kt -->
+<!-- 変更テスト: src/test/kotlin/.../editor/CommentInlayManagerStorageTest.kt -->
+- [x] Task: CommentInlayManager の複数コメント対応リファクタリング [240bc11]
+    - [x] EditorState の blockInlay / blockRenderer を単一からマップ管理（commentId → Inlay）に変更する
+    - [x] saveComment() で既存ブロックを全破棄せず該当コメントのみ追加/更新するよう修正する
+    - [x] cancelComment() / deleteComment() を複数Inlay対応に修正する
+    - [x] installInlayClickListener() を複数Inlayのクリック検出に対応させる
+    - [x] openInputPanel() の既存コメント編集時にコメントIDを受け渡せるようにする
+- [ ] Task: エディタ起動時に保存済み全コメントをInlay表示する処理を追加する
+    - [ ] CommentInlayManager.restoreComments() を実装し、保存済みコメントをすべてInlayブロックとして復元する
+    - [ ] ReviewCommentEditorTracker.track() または適切なタイミングで復元処理を呼び出す
+- [ ] Task: 既存テストの修正と複数コメント表示のテストを追加する
+    - [ ] 既存テストが複数コメント対応の新しい内部APIに合うよう修正する
+    - [ ] 複数コメント保存・表示の結合テストを追加する
+- [ ] Task: Conductor - User Manual Verification 'Phase 4: 複数コメント表示の不具合修正'
