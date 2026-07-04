@@ -22,7 +22,10 @@ class AddReviewCommentAction : AnAction(), DumbAware {
 
     override fun actionPerformed(event: AnActionEvent) {
         val editor = event.getData(CommonDataKeys.EDITOR) ?: return
+        val project = editor.project ?: return
+        val file = event.getData(CommonDataKeys.VIRTUAL_FILE)
+            ?: FileDocumentManager.getInstance().getFile(editor.document) ?: return
         val lineRange = ReviewCommentEditorLineRangeResolver.resolve(editor)
-        CommentInlayManager.openInputPanel(editor, lineRange, null)
+        CommentInlayManager.openInputPanel(editor, lineRange, project, file.path, null)
     }
 }

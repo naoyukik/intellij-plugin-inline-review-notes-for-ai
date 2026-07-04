@@ -5,12 +5,14 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class CommentInlayManagerTest : BasePlatformTestCase() {
 
+    private val filePath: String by lazy { myFixture.file.virtualFile.path }
+
     fun test_open_input_panel_creates_input_state() {
         myFixture.configureByText("Foo.kt", "first line\nsecond line\n")
 
         val editor = myFixture.editor
 
-        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2))
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2), project, filePath)
 
         assertTrue(CommentInlayManager.hasInputPanel(editor))
         assertFalse(CommentInlayManager.hasBlockRenderer(editor))
@@ -22,7 +24,7 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
 
         val editor = myFixture.editor
 
-        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2))
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2), project, filePath)
         CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "保存済み"
         CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
 
@@ -36,7 +38,7 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
 
         val editor = myFixture.editor
 
-        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2))
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2), project, filePath)
         CommentInlayManager.activeInputPanel(editor)?.cancelButton?.doClick()
 
         assertFalse(CommentInlayManager.hasInputPanel(editor))
@@ -48,7 +50,7 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
 
         val editor = myFixture.editor
 
-        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2))
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2), project, filePath)
         CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "元コメント"
         CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
 
@@ -67,7 +69,7 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
 
         val editor = myFixture.editor
 
-        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2))
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(2, 2), project, filePath)
         CommentInlayManager.activeInputPanel(editor)?.deleteButton?.doClick()
 
         assertFalse(CommentInlayManager.hasInputPanel(editor))

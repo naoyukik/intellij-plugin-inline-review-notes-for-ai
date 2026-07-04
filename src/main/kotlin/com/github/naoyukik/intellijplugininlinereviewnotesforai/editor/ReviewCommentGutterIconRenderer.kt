@@ -19,7 +19,8 @@ class ReviewCommentGutterIconRenderer(
     override fun getClickAction(): AnAction = object : AnAction(), DumbAware {
         override fun actionPerformed(e: AnActionEvent) {
             val editor = e.getData(com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR) ?: return
-            CommentInlayManager.openInputPanel(editor, lineRange, null)
+            val proj = editor.project ?: return
+            CommentInlayManager.openInputPanel(editor, lineRange, proj, filePath, null)
         }
     }
 

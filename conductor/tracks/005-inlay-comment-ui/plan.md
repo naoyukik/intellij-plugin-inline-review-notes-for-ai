@@ -70,23 +70,23 @@
     - [x] Task: 右クリックメニュー（AddReviewCommentAction）からエディタ上のインライン入力パネルを呼び出すように変更する
         - [x] `src/test/kotlin/.../action/AddReviewCommentActionTest.kt` に、アクション実行時に `CommentInlayManager.openInputPanel` が呼び出されること、および既存のダイアログ表示が削除されていることを検証するテストを記述する（TDD Red Phase）
         - [x] `src/main/kotlin/.../action/AddReviewCommentAction.kt` を変更して `CommentInlayManager.openInputPanel` を呼び出すようにし、テストをパスさせる（TDD Green Phase）
-    - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
+      - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Interaction Logic' (Protocol in workflow.md)
 - [x] Task: Phase 2 をコミットし、本フェーズを完了とする [checkpoint: 03f5c8d]
 
 ## Phase 3: Storage Integration
 <!-- 変更ファイル: src/main/kotlin/.../editor/CommentInlayManager.kt (Save/Delete でストレージ連携) -->
 <!-- 新規テスト:  src/test/kotlin/.../editor/CommentInlayManagerStorageTest.kt -->
-- [ ] Task: ローカル JSON ストレージ連携
-    - [ ] `src/test/kotlin/.../editor/CommentInlayManagerStorageTest.kt` を新規作成し、以下を検証するテストを記述する（TDD Red Phase）:
+- [x] Task: ローカル JSON ストレージ連携
+    - [x] `src/test/kotlin/.../editor/CommentInlayManagerStorageTest.kt` を新規作成し、以下を検証するテストを記述する（TDD Red Phase）:
         - Save コールバック時に `ReviewCommentStorage.save()` が呼ばれること（モック使用）
         - 保存される `ReviewComment` の `filePath`, `lineStart`, `lineEnd`, `comment` が正しいこと
         - Delete コールバック時に `ReviewCommentStorage.save()` が呼ばれ、対象コメントが除外されたドキュメントが保存されること
-    - [ ] `CommentInlayManager.kt` の Save/Delete ロジックに `ReviewCommentStorage` 連携を実装し、テストをパスさせる（TDD Green Phase）:
+    - [x] `CommentInlayManager.kt` の Save/Delete ロジックに `ReviewCommentStorage` 連携を実装し、テストをパスさせる（TDD Green Phase）:
         - `openInputPanel` 呼び出し元（`ReviewCommentGutterIconRenderer` または `AddReviewCommentAction`）が `project` を渡し、`ReviewCommentStorage` を初期化
         - Save 時: `UUID.randomUUID().toString()` で ID 生成、`ReviewComment` を作成し、`storage.load()` に追加して `storage.save()`
         - Delete 時: `storage.load()` から該当コメント（ID 一致）を除去して `storage.save()`
         - `createdAt` は `java.time.OffsetDateTime.now()` を ISO 8601 フォーマットで文字列化
-    - [ ] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Storage Integration' (Protocol in workflow.md)
+    - [x] `./gradlew detekt` を実行し、コードスタイルと静的解析を確認する
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Storage Integration' (Protocol in workflow.md)
 - [ ] Task: Phase 3 をコミットし、本フェーズを完了とする
