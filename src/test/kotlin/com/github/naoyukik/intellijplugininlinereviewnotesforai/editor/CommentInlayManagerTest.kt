@@ -64,6 +64,21 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
         assertEquals("元コメント", CommentInlayManager.activeInputPanel(editor)?.textArea?.text)
     }
 
+    fun test_multiple_saves_shows_all_block_renderers() {
+        myFixture.configureByText("Foo.kt", "line1\nline2\nline3\nline4\n")
+        val editor = myFixture.editor
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "コメント1"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(3, 3), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "コメント2"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        assertEquals(2, CommentInlayManager.commentInlayCount(editor))
+    }
+
     fun test_delete_discards_all_state() {
         myFixture.configureByText("Foo.kt", "first line\nsecond line\n")
 

@@ -1,3 +1,5 @@
+@file:Suppress("ArgumentListWrapping")
+
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui.CommentBlockRenderer
@@ -17,8 +19,10 @@ import com.intellij.ui.awt.RelativePoint
 import java.nio.file.Path
 import java.time.OffsetDateTime
 import java.util.IdentityHashMap
+import java.util.LinkedHashMap
 import java.util.UUID
 
+@Suppress("TooManyFunctions")
 object CommentInlayManager {
 
     private val editorStates = IdentityHashMap<Editor, EditorState>()
@@ -29,17 +33,18 @@ object CommentInlayManager {
         project: Project,
         filePath: String,
         existingComment: String? = null,
+        existingCommentId: String? = null,
     ) {
         val state = editorStates.getOrPut(editor) { EditorState() }
-        state.lineRange = lineRange
         state.project = project
         state.filePath = filePath
-        state.existingComment = existingComment
-        if (existingComment == null) {
-            state.existingCommentId = null
-        }
-        state.disposeBlockInlay()
+        state.currentEditLineRange = lineRange
+        state.currentEditCommentId = existingCommentId
         state.disposeInputInlay()
+
+        if (existingCommentId != null) {
+            state.disposeCommentInlay(existingCommentId)
+        }
 
         val inputPanel = CommentInputPanel(
             existingComment = existingComment,
@@ -54,15 +59,57 @@ object CommentInlayManager {
 
     fun hasInputPanel(editor: Editor): Boolean = editorStates[editor]?.inputPanel != null
 
-    fun hasBlockRenderer(editor: Editor): Boolean = editorStates[editor]?.blockRenderer != null
+    fun hasBlockRenderer(editor: Editor): Boolean = editorStates[editor]?.commentInlays?.isNotEmpty() ?: false
 
     fun activeInputPanel(editor: Editor): CommentInputPanel? = editorStates[editor]?.inputPanel
 
-    fun activeBlockRenderer(editor: Editor): CommentBlockRenderer? = editorStates[editor]?.blockRenderer
+    fun activeBlockRenderer(editor: Editor): CommentBlockRenderer? {
+        val state = editorStates[editor] ?: return null
+        return state.commentRenderers.entries.lastOrNull()?.value
+    }
 
+    fun commentInlayCount(editor: Editor): Int = editorStates[editor]?.commentInlays?.size ?: 0
+
+    @Suppress("LoopWithTooManyJumpStatements")
+    fun restoreComments(editor: Editor, project: Project, filePath: String) {
+        val state = editorStates.getOrPut(editor) { EditorState() }
+        state.project = project
+        state.filePath = filePath
+
+        if (state.commentInlays.isNotEmpty()) return
+
+        val projectRoot = project.basePath?.let { Path.of(it) } ?: return
+        val storage = ReviewCommentStorage(projectRoot)
+        val document = storage.load()
+
+        val fileComments = document.comments.filter { it.filePath == filePath }
+        for (comment in fileComments) {
+            val lineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
+            val renderer = CommentBlockRenderer(
+                text = comment.comment,
+                onClick = {
+                    editorStates[editor]?.let { s ->
+                        openInputPanel(
+                            editor,
+                            lineRange,
+                            s.project!!,
+                            s.filePath!!,
+                            comment.comment,
+                            comment.id,
+                        )
+                    }
+                },
+            )
+            val inlay = addBlockInlay(editor, lineRange, renderer) ?: continue
+            state.commentInlays[comment.id] = inlay
+            state.commentRenderers[comment.id] = renderer
+        }
+    }
+
+    @Suppress("ReturnCount")
     private fun saveComment(editor: Editor, text: String) {
         val state = editorStates[editor] ?: return
-        val lineRange = state.lineRange ?: return
+        val lineRange = state.currentEditLineRange ?: return
         val project = state.project ?: return
         val filePath = state.filePath ?: return
 
@@ -70,11 +117,19 @@ object CommentInlayManager {
         val storage = ReviewCommentStorage(projectRoot)
         val document = storage.load()
 
-        val filteredComments = state.existingCommentId?.let { oldId ->
-            document.comments.filter { it.id != oldId }
-        } ?: document.comments
+        val editCommentId = state.currentEditCommentId
+        val commentId: String
+        val filteredComments: List<ReviewComment>
 
-        val commentId = UUID.randomUUID().toString()
+        if (editCommentId != null) {
+            commentId = editCommentId
+            filteredComments = document.comments.filter { it.id != commentId }
+            state.disposeCommentInlay(commentId)
+        } else {
+            commentId = UUID.randomUUID().toString()
+            filteredComments = document.comments
+        }
+
         val reviewComment = ReviewComment(
             id = commentId,
             filePath = filePath,
@@ -85,57 +140,66 @@ object CommentInlayManager {
         )
         storage.save(document.copy(comments = filteredComments + reviewComment))
 
-        state.existingCommentId = commentId
-        state.existingComment = text
-
         state.disposeInputInlay()
-        state.disposeBlockInlay()
+        state.currentEditCommentId = null
+        state.currentEditLineRange = null
 
         val blockRenderer = CommentBlockRenderer(
             text = text,
             onClick = {
                 editorStates[editor]?.let { s ->
-                    openInputPanel(editor, s.lineRange!!, s.project!!, s.filePath!!, text)
+                    openInputPanel(editor, lineRange, s.project!!, s.filePath!!, text, commentId)
                 }
             },
         )
-        state.blockRenderer = blockRenderer
-        state.blockInlay = addBlockInlay(
-            editor = editor,
-            lineRange = lineRange,
-            renderer = blockRenderer,
-        )
+        val inlay = addBlockInlay(editor, lineRange, blockRenderer) ?: return
+        state.commentInlays[commentId] = inlay
+        state.commentRenderers[commentId] = blockRenderer
     }
 
     private fun cancelComment(editor: Editor) {
         val state = editorStates[editor] ?: return
-        val lineRange = state.lineRange ?: return
-
+        val editCommentId = state.currentEditCommentId
         state.disposeInputInlay()
-        if (state.existingComment != null) {
-            val blockRenderer = CommentBlockRenderer(
-                text = state.existingComment.orEmpty(),
-                onClick = {
-                    editorStates[editor]?.let { s ->
-                        openInputPanel(editor, s.lineRange!!, s.project!!, s.filePath!!, s.existingComment)
-                    }
-                },
-            )
-            state.blockRenderer = blockRenderer
-            state.blockInlay = addBlockInlay(
-                editor = editor,
-                lineRange = lineRange,
-                renderer = blockRenderer,
-            )
-        } else {
-            state.disposeBlockInlay()
+
+        if (editCommentId != null) {
+            val project = state.project ?: return
+            val filePath = state.filePath ?: return
+            val projectRoot = project.basePath?.let { Path.of(it) } ?: return
+            val storage = ReviewCommentStorage(projectRoot)
+            val document = storage.load()
+            val comment = document.comments.find { it.id == editCommentId }
+            if (comment != null) {
+                val restoreLineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
+                val renderer = CommentBlockRenderer(
+                    text = comment.comment,
+                    onClick = {
+                        editorStates[editor]?.let { s ->
+                            openInputPanel(
+                                editor,
+                                restoreLineRange,
+                                s.project!!,
+                                s.filePath!!,
+                                comment.comment,
+                                comment.id,
+                            )
+                        }
+                    },
+                )
+                val inlay = addBlockInlay(editor, restoreLineRange, renderer) ?: return
+                state.commentInlays[editCommentId] = inlay
+                state.commentRenderers[editCommentId] = renderer
+            }
         }
+
+        state.currentEditCommentId = null
+        state.currentEditLineRange = null
     }
 
     private fun deleteComment(editor: Editor) {
         val state = editorStates[editor] ?: return
         val project = state.project
-        val commentId = state.existingCommentId
+        val commentId = state.currentEditCommentId
 
         if (project != null && commentId != null) {
             val projectRoot = project.basePath?.let { Path.of(it) }
@@ -147,10 +211,11 @@ object CommentInlayManager {
         }
 
         state.disposeInputInlay()
-        state.disposeBlockInlay()
-        state.lineRange = null
-        state.existingComment = null
-        state.existingCommentId = null
+        if (commentId != null) {
+            state.disposeCommentInlay(commentId)
+        }
+        state.currentEditCommentId = null
+        state.currentEditLineRange = null
     }
 
     private fun addBlockInlay(
@@ -180,12 +245,11 @@ object CommentInlayManager {
             override fun mouseClicked(event: EditorMouseEvent) {
                 val mouseEvent = event.mouseEvent
                 val clickPoint = mouseEvent.point
-                val blockInlay = state.blockInlay ?: return
-                val bounds = blockInlay.bounds ?: return
-                if (bounds.contains(clickPoint)) {
-                    val renderer = state.blockRenderer
-                    if (renderer != null) {
-                        renderer.onClick()
+                for ((commentId, inlay) in state.commentInlays) {
+                    val bounds = inlay.bounds
+                    if (bounds != null && bounds.contains(clickPoint)) {
+                        state.commentRenderers[commentId]?.onClick()
+                        break
                     }
                 }
             }
@@ -195,15 +259,16 @@ object CommentInlayManager {
     }
 
     private class EditorState {
-        var lineRange: ReviewCommentLineRange? = null
         var project: Project? = null
         var filePath: String? = null
-        var existingComment: String? = null
-        var existingCommentId: String? = null
+
+        val commentInlays: MutableMap<String, Inlay<*>> = LinkedHashMap()
+        val commentRenderers: MutableMap<String, CommentBlockRenderer> = LinkedHashMap()
+
+        var currentEditCommentId: String? = null
+        var currentEditLineRange: ReviewCommentLineRange? = null
         var inputPanel: CommentInputPanel? = null
-        var blockRenderer: CommentBlockRenderer? = null
         var popup: JBPopup? = null
-        var blockInlay: Inlay<*>? = null
         var mouseListener: EditorMouseListener? = null
 
         fun disposeInputInlay() {
@@ -212,10 +277,10 @@ object CommentInlayManager {
             inputPanel = null
         }
 
-        fun disposeBlockInlay() {
-            blockInlay?.let(Disposer::dispose)
-            blockInlay = null
-            blockRenderer = null
+        fun disposeCommentInlay(commentId: String) {
+            commentInlays[commentId]?.let { Disposer.dispose(it) }
+            commentInlays.remove(commentId)
+            commentRenderers.remove(commentId)
         }
     }
 }
