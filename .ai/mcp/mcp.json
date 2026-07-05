@@ -3,6 +3,10 @@
     "mempalace": {
       "command": "mempalace-mcp",
       "args": []
+    },
+    "jetbrains": {
+      "type": "streamable-http",
+      "url": "http://127.0.0.1:64421/stream"
     }
   }
 }
