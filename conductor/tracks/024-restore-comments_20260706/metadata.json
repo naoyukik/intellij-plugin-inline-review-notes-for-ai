@@ -1,0 +1,8 @@
+{
+  "track_id": "024-restore-comments_20260706",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-06T08:26:00Z",
+  "updated_at": "2026-07-06T08:26:00Z",
+  "description": "GitHub Issue 24: feat: 既存ファイルを開いたときに保存済みコメントをエディタに復元する"
+}
