@@ -48,6 +48,12 @@ object ReviewCommentEditorTracker {
         )
 
         refresh(editor)
+
+        val project = editor.project
+        val file = FileDocumentManager.getInstance().getFile(editor.document)
+        if (project != null && file != null) {
+            CommentInlayManager.restoreComments(editor, project, file.path)
+        }
     }
 
     fun release(editor: Editor) {

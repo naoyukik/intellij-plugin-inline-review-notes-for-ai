@@ -79,6 +79,19 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
         assertEquals(2, CommentInlayManager.commentInlayCount(editor))
     }
 
+    fun test_restore_comments_is_idempotent() {
+        myFixture.configureByText("Foo.kt", "line1\nline2\nline3\n")
+        val editor = myFixture.editor
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "復元テスト"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        val countBefore = CommentInlayManager.commentInlayCount(editor)
+        CommentInlayManager.restoreComments(editor, project, filePath)
+        assertEquals(countBefore, CommentInlayManager.commentInlayCount(editor))
+    }
+
     fun test_delete_discards_all_state() {
         myFixture.configureByText("Foo.kt", "first line\nsecond line\n")
 
