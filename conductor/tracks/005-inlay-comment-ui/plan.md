@@ -110,3 +110,6 @@
     - [x] 既存テストが複数コメント対応の新しい内部APIに合うよう修正する
     - [x] 複数コメント保存・表示の結合テストを追加する
 - [x] Task: Conductor - User Manual Verification 'Phase 4: 複数コメント表示の不具合修正' [447efd0]
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions [96c7904]
