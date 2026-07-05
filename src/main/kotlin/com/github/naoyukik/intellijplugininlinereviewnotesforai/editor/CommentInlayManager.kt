@@ -70,6 +70,13 @@ object CommentInlayManager {
 
     fun commentInlayCount(editor: Editor): Int = editorStates[editor]?.commentInlays?.size ?: 0
 
+    fun releaseEditor(editor: Editor) {
+        editorStates.remove(editor)?.let { state ->
+            state.commentInlays.values.forEach { Disposer.dispose(it) }
+            state.disposeInputInlay()
+        }
+    }
+
     @Suppress("LoopWithTooManyJumpStatements")
     fun restoreComments(editor: Editor, project: Project, filePath: String) {
         val state = editorStates.getOrPut(editor) { EditorState() }

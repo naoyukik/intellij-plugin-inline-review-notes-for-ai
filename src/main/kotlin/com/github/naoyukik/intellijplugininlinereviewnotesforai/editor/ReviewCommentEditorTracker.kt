@@ -58,6 +58,7 @@ object ReviewCommentEditorTracker {
 
     fun release(editor: Editor) {
         editorStates.remove(editor)?.dispose(editor)
+        CommentInlayManager.releaseEditor(editor)
     }
 
     fun editorCreated(event: EditorFactoryEvent) {

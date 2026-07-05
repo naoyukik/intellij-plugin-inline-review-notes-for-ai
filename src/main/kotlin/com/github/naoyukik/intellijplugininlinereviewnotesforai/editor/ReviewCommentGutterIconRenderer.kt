@@ -28,7 +28,7 @@ class ReviewCommentGutterIconRenderer(
 
     override fun getAlignment(): Alignment = Alignment.CENTER
 
-    override fun isNavigateAction(): Boolean = true
+    override fun isNavigateAction(): Boolean = false
 
     override fun equals(other: Any?): Boolean =
         other is ReviewCommentGutterIconRenderer &&
