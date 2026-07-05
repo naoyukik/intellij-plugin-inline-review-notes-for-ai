@@ -103,10 +103,10 @@
     - [x] cancelComment() / deleteComment() を複数Inlay対応に修正する
     - [x] installInlayClickListener() を複数Inlayのクリック検出に対応させる
     - [x] openInputPanel() の既存コメント編集時にコメントIDを受け渡せるようにする
-- [ ] Task: エディタ起動時に保存済み全コメントをInlay表示する処理を追加する
-    - [ ] CommentInlayManager.restoreComments() を実装し、保存済みコメントをすべてInlayブロックとして復元する
-    - [ ] ReviewCommentEditorTracker.track() または適切なタイミングで復元処理を呼び出す
-- [ ] Task: 既存テストの修正と複数コメント表示のテストを追加する
-    - [ ] 既存テストが複数コメント対応の新しい内部APIに合うよう修正する
-    - [ ] 複数コメント保存・表示の結合テストを追加する
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: 複数コメント表示の不具合修正'
+- [x] Task: エディタ起動時に保存済み全コメントをInlay表示する処理を追加する [447efd0]
+    - [x] CommentInlayManager.restoreComments() を実装し、保存済みコメントをすべてInlayブロックとして復元する
+    - [x] ReviewCommentEditorTracker.track() で復元処理を呼び出す
+- [x] Task: 既存テストの修正と複数コメント表示のテストを追加する
+    - [x] 既存テストが複数コメント対応の新しい内部APIに合うよう修正する
+    - [x] 複数コメント保存・表示の結合テストを追加する
+- [x] Task: Conductor - User Manual Verification 'Phase 4: 複数コメント表示の不具合修正' [447efd0]
