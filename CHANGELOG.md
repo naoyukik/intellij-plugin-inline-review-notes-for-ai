@@ -3,5 +3,9 @@
 # intellij-plugin-inline-review-notes-for-ai Changelog
 
 ## [Unreleased]
+
+## [0.0.1] - 2026-07-05
+
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+- Initial release
