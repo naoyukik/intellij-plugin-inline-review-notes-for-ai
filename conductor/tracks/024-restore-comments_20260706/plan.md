@@ -5,13 +5,13 @@
 
 ---
 
-## フェーズ 0: 設計と調査
+## フェーズ 0: 設計と調査 [checkpoint: 1756e5d]
 - [x] Task: 既存実装の調査と詳細設計
     - [x] `ReviewCommentEditorTracker.kt` と `CommentInlayManager.kt` におけるエディタイベント検知およびインレイ描画処理の既存ロジックを詳細に調査する。
     - [x] `FileEditorManagerListener` をどのコンポーネント（プロジェクトサービス等）で購読・管理すべきか設計する。→ 新規 `ReviewCommentEditorFileListener` クラス + `plugin.xml` 登録
     - [x] 絶対パスからプロジェクト相対パスへの変換方法（例: `project.basePath` からの相対化）の共通実装場所を特定・設計する。→ `CommentInlayManager` 内に private 関数として実装
 - [x] Task: Conductor - ユーザー手動検証 'Phase 0' (Protocol in workflow.ja.md)
-- [~] Task: Phase 0 コミットし、本フェーズを完了とする
+- [x] Task: Phase 0 コミットし、本フェーズを完了とする
 
 ## フェーズ 1: コメントパスの相対化 (TDD)
 
