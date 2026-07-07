@@ -38,7 +38,7 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         assertTrue(document.comments.isNotEmpty())
 
         val savedComment = document.comments.first()
-        assertEquals(file.path, savedComment.filePath)
+        assertEquals("src/Foo.kt", savedComment.filePath)
         assertEquals(2, savedComment.lineStart)
         assertEquals(2, savedComment.lineEnd)
         assertEquals("保存済みコメント", savedComment.comment)
