@@ -13,6 +13,7 @@
 
     <applicationListeners>
         <listener class="com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ReviewCommentEditorFactoryListener" topic="com.intellij.openapi.editor.event.EditorFactoryListener"/>
+        <listener class="com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ReviewCommentFileOpener" topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
