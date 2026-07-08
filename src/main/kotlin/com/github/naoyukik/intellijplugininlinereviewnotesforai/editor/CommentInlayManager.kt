@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -89,7 +90,8 @@ object CommentInlayManager {
         val storage = ReviewCommentStorage(projectRoot)
         val document = storage.load()
 
-        val fileComments = document.comments.filter { it.filePath == filePath }
+        val relativePath = resolveRelativePath(editor, project)
+        val fileComments = document.comments.filter { it.filePath == relativePath }
         for (comment in fileComments) {
             val lineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
             val renderer = CommentBlockRenderer(
@@ -118,7 +120,6 @@ object CommentInlayManager {
         val state = editorStates[editor] ?: return
         val lineRange = state.currentEditLineRange ?: return
         val project = state.project ?: return
-        val filePath = state.filePath ?: return
 
         val projectRoot = project.basePath?.let { Path.of(it) } ?: return
         val storage = ReviewCommentStorage(projectRoot)
@@ -137,9 +138,10 @@ object CommentInlayManager {
             filteredComments = document.comments
         }
 
+        val relativePath = resolveRelativePath(editor, project) ?: return
         val reviewComment = ReviewComment(
             id = commentId,
-            filePath = filePath,
+            filePath = relativePath,
             lineStart = lineRange.startLine,
             lineEnd = lineRange.endLine,
             comment = text,
@@ -289,6 +291,18 @@ object CommentInlayManager {
             commentInlays.remove(commentId)
             commentRenderers.remove(commentId)
         }
+    }
+}
+
+private fun resolveRelativePath(editor: Editor, project: Project): String? {
+    val vf = FileDocumentManager.getInstance().getFile(editor.document) ?: return null
+    val base = project.basePath?.replace('\\', '/')?.trimEnd('/') ?: return null
+    val filePath = vf.path.replace('\\', '/')
+    val prefix = "$base/"
+    return when {
+        filePath.startsWith(prefix) -> filePath.substring(prefix.length)
+        filePath.startsWith('/') -> filePath.substring(1)
+        else -> null
     }
 }
 
