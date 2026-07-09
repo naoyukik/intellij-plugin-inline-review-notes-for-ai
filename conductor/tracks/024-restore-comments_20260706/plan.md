@@ -21,18 +21,18 @@
 - `restoreComments` 内でフィルタリング時に引数の絶対パスを相対パスに変換し、保存済みの相対パスと比較
 - 呼び出し元（`AddReviewCommentAction.kt`, `ReviewCommentEditorTracker.kt`, `ReviewCommentGutterIconRenderer.kt`）は変更不要（内部で自動変換）
 
-- [~] Task: コメントパス相対化のテスト追加 (Red)
-    - [ ] `CommentInlayManagerStorageTest.kt` の `test_save_persists_comment_to_storage` で `assertEquals(file.path, savedComment.filePath)` の期待値を相対パス（例: `"Foo.kt"`）に変更し、Red を確認する。
-    - [ ] `CommentInlayManagerStorageTest.kt` の `test_save_with_existing_comment_updates_storage` でも保存後のコメント取得時に相対パス検証に変更する。
-- [ ] Task: コメントパス相対化の実装 (Green)
-    - [ ] `CommentInlayManager` に `Project.toRelativePath(absolutePath: String): String?` を private 拡張関数として追加する。
-    - [ ] `saveComment` 内で `ReviewComment` 作成時の `filePath` に相対パスを使用する。
-    - [ ] `restoreComments` 内のフィルタ条件 `it.filePath == filePath` を相対パス比較に変更する。
-    - [ ] `CommentInlayManagerStorageTest.kt` のアサーション（3箇所）を相対パスに修正する。
-    - [ ] テストを実行し、すべてのテストがパスすることを確認する。
-    - [ ] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.ja.md)
-- [ ] Task: Phase 1 コミットし、本フェーズを完了とする
+- [ｘ] Task: コメントパス相対化のテスト追加 (Red)
+    - [x] `CommentInlayManagerStorageTest.kt` の `test_save_persists_comment_to_storage` で `assertEquals(file.path, savedComment.filePath)` の期待値を相対パス（例: `"Foo.kt"`）に変更し、Red を確認する。
+    - [x] `CommentInlayManagerStorageTest.kt` の `test_save_with_existing_comment_updates_storage` でも保存後のコメント取得時に相対パス検証に変更する。
+- [x] Task: コメントパス相対化の実装 (Green)
+    - [x] `CommentInlayManager` に `Project.toRelativePath(absolutePath: String): String?` を private 拡張関数として追加する。
+    - [x] `saveComment` 内で `ReviewComment` 作成時の `filePath` に相対パスを使用する。
+    - [x] `restoreComments` 内のフィルタ条件 `it.filePath == filePath` を相対パス比較に変更する。
+    - [x] `CommentInlayManagerStorageTest.kt` のアサーション（3箇所）を相対パスに修正する。
+    - [x] テストを実行し、すべてのテストがパスすることを確認する。
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
+- [x] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.ja.md)
+- [x] Task: Phase 1 コミットし、本フェーズを完了とする
 
 ## フェーズ 2: 自動復元機能とイベントリスナーの実装 (TDD)
 
@@ -72,4 +72,4 @@
     - [x] テストを実行し、すべてのテストがパスすることを確認する
     - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する
 - [x] Task: Conductor - ユーザー手動検証 'Phase 3' (Protocol in workflow.ja.md)
-- [ ] Task: Phase 3 コミットし、本フェーズを完了とする
+- [x] Task: Phase 3 コミットし、本フェーズを完了とする
