@@ -82,16 +82,25 @@ object CommentInlayManager {
     fun restoreComments(editor: Editor, project: Project, filePath: String) {
         val state = editorStates.getOrPut(editor) { EditorState() }
         state.project = project
-        state.filePath = filePath
 
-        if (state.commentInlays.isNotEmpty()) return
+        if (state.filePath == filePath && state.commentInlays.isNotEmpty()) return
+
+        if (state.filePath != filePath && state.filePath != null) {
+            state.commentInlays.values.forEach { Disposer.dispose(it) }
+            state.commentInlays.clear()
+            state.commentRenderers.clear()
+        }
+
+        state.filePath = filePath
 
         val projectRoot = project.basePath?.let { Path.of(it) } ?: return
         val storage = ReviewCommentStorage(projectRoot)
         val document = storage.load()
 
         val relativePath = resolveRelativePath(editor, project)
-        val fileComments = document.comments.filter { it.filePath == relativePath }
+        val fileComments = document.comments.filter {
+            it.filePath == relativePath && it.resolvedAt == null
+        }
         for (comment in fileComments) {
             val lineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
             val renderer = CommentBlockRenderer(

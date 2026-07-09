@@ -42,18 +42,18 @@
 - `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更 — 同一 Editor インスタンスでタブ切替（別ファイル）の場合にも復元を可能にする
 - `resolvedAt == null` フィルタも同時に追加
 
-- [ ] Task: 自動復元トリガーのテスト追加 (Red)
-    - [ ] ファイルが新規に開かれた時、対応する未解決コメントが復元されることを検証する統合テストを作成し、Red を確認する。
-    - [ ] エディタタブが切り替わった時、新しいファイルに対応する未解決コメントが復元されることを検証するテストを作成し、Red を確認する。
-    - [ ] 解決済み（`resolvedAt` 設定済み）コメントは復元されないことを検証するテストを作成し、Red を確認する。
-- [ ] Task: 自動復元トリガーの実装 (Green)
-    - [ ] `ReviewCommentEditorFileListener` クラスを作成し `FileEditorManagerListener` を実装する。
+- [x] Task: 自動復元トリガーのテスト追加 (Red)
+    - [x] ファイルが新規に開かれた時、対応する未解決コメントが復元されることを検証する統合テストを作成し、Red を確認する。
+    - [x] エディタタブが切り替わった時、新しいファイルに対応する未解決コメントが復元されることを検証するテストを作成し、Red を確認する。
+    - [x] 解決済み（`resolvedAt` 設定済み）コメントは復元されないことを検証するテストを作成し、Red を確認する。
+- [x] Task: 自動復元トリガーの実装 (Green)
+    - [x] `ReviewCommentEditorFileListener` クラスを作成し `FileEditorManagerListener` を実装する。
         - `fileOpened`: 開かれたファイルに対応するエディタを取得し `CommentInlayManager.restoreComments` を呼ぶ
         - `selectionChanged`: 新しく選択されたファイルに対応するエディタを取得し `CommentInlayManager.restoreComments` を呼ぶ
-    - [ ] `plugin.xml` に `editorFileEditorManagerListener` 拡張を追加する。
-    - [ ] `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更する。
-    - [ ] `restoreComments` 内のフィルタに `&& it.resolvedAt == null` を追加する。
-    - [ ] テストを実行し、すべてのテストがパスすることを確認する。
-    - [ ] `./gradlew detekt` および `./gradlew build` を実行し、ビルドと静的解析が正常に通ることを確認する。
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.ja.md)
+    - [x] `plugin.xml` に `editorFileEditorManagerListener` 拡張を追加する。
+    - [x] `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更する。
+    - [x] `restoreComments` 内のフィルタに `&& it.resolvedAt == null` を追加する。
+    - [x] テストを実行し、すべてのテストがパスすることを確認する。
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
+- [x] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.ja.md)
 - [ ] Task: Phase 2 コミットし、本フェーズを完了とする
