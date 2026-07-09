@@ -56,4 +56,20 @@
     - [x] テストを実行し、すべてのテストがパスすることを確認する。
     - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
 - [x] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.ja.md)
-- [ ] Task: Phase 2 コミットし、本フェーズを完了とする
+- [x] Task: Phase 2 コミットし、本フェーズを完了とする
+
+## フェーズ 3: ファイルオープン時のガター設置 (TDD)
+
+### 設計方針
+- 既存の `ReviewCommentEditorFileListener.fileOpened` / `selectionChanged` 内で、`CommentInlayManager.restoreComments` 呼出後に `ReviewCommentEditorTracker.track(editor)` を呼びガターアイコンを設置する
+- `ReviewCommentEditorTracker.track` はエディタが未追跡の場合は追跡を開始し、既追跡の場合は `refresh` でガター位置を更新する
+- リスナー内の不要な null-safe 演算子（non-nullable 型に対する `?: return`）を除去する
+
+- [x] Task: ガター設置のテスト追加 (Red)
+    - [x] `fileOpened` 呼出後にエディタのガターアイコンが設置されることを検証するテストを作成
+- [x] Task: ガター設置の実装 (Green)
+    - [x] `ReviewCommentEditorFileListener.fileOpened` / `selectionChanged` に `ReviewCommentEditorTracker.track(editor)` を追加
+    - [x] テストを実行し、すべてのテストがパスすることを確認する
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する
+- [x] Task: Conductor - ユーザー手動検証 'Phase 3' (Protocol in workflow.ja.md)
+- [ ] Task: Phase 3 コミットし、本フェーズを完了とする

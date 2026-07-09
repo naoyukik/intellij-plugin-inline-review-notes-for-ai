@@ -4,6 +4,7 @@ import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewComm
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewCommentDocument
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.storage.ReviewCommentStorage
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.nio.file.Path
 import java.time.OffsetDateTime
@@ -36,6 +37,24 @@ class ReviewCommentEditorFileListenerTest : BasePlatformTestCase() {
         com.intellij.testFramework.PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
         assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+    }
+
+    fun test_fileOpened_installs_gutter_icon() {
+        myFixture.configureByText("Foo.kt", "line1\nline2\nline3\n")
+        val editor = myFixture.editor
+        val project = project
+        val file = myFixture.file.virtualFile
+
+        ReviewCommentEditorTracker.release(editor)
+
+        val listener = ReviewCommentEditorFileListener()
+        listener.fileOpened(FileEditorManager.getInstance(project), file)
+        com.intellij.testFramework.PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+
+        val hasGutterIcon = editor.markupModel.allHighlighters.any {
+            it.gutterIconRenderer != null
+        }
+        assertTrue(hasGutterIcon)
     }
 
     fun test_restoreComments_filters_resolved_comments() {
