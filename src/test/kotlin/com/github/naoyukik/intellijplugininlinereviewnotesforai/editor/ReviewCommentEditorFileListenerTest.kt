@@ -4,7 +4,6 @@ import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewComm
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewCommentDocument
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.storage.ReviewCommentStorage
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.nio.file.Path
 import java.time.OffsetDateTime
