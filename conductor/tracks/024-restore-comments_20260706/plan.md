@@ -21,18 +21,18 @@
 - `restoreComments` 内でフィルタリング時に引数の絶対パスを相対パスに変換し、保存済みの相対パスと比較
 - 呼び出し元（`AddReviewCommentAction.kt`, `ReviewCommentEditorTracker.kt`, `ReviewCommentGutterIconRenderer.kt`）は変更不要（内部で自動変換）
 
-- [~] Task: コメントパス相対化のテスト追加 (Red)
-    - [ ] `CommentInlayManagerStorageTest.kt` の `test_save_persists_comment_to_storage` で `assertEquals(file.path, savedComment.filePath)` の期待値を相対パス（例: `"Foo.kt"`）に変更し、Red を確認する。
-    - [ ] `CommentInlayManagerStorageTest.kt` の `test_save_with_existing_comment_updates_storage` でも保存後のコメント取得時に相対パス検証に変更する。
-- [ ] Task: コメントパス相対化の実装 (Green)
-    - [ ] `CommentInlayManager` に `Project.toRelativePath(absolutePath: String): String?` を private 拡張関数として追加する。
-    - [ ] `saveComment` 内で `ReviewComment` 作成時の `filePath` に相対パスを使用する。
-    - [ ] `restoreComments` 内のフィルタ条件 `it.filePath == filePath` を相対パス比較に変更する。
-    - [ ] `CommentInlayManagerStorageTest.kt` のアサーション（3箇所）を相対パスに修正する。
-    - [ ] テストを実行し、すべてのテストがパスすることを確認する。
-    - [ ] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.ja.md)
-- [ ] Task: Phase 1 コミットし、本フェーズを完了とする
+- [ｘ] Task: コメントパス相対化のテスト追加 (Red)
+    - [x] `CommentInlayManagerStorageTest.kt` の `test_save_persists_comment_to_storage` で `assertEquals(file.path, savedComment.filePath)` の期待値を相対パス（例: `"Foo.kt"`）に変更し、Red を確認する。
+    - [x] `CommentInlayManagerStorageTest.kt` の `test_save_with_existing_comment_updates_storage` でも保存後のコメント取得時に相対パス検証に変更する。
+- [x] Task: コメントパス相対化の実装 (Green)
+    - [x] `CommentInlayManager` に `Project.toRelativePath(absolutePath: String): String?` を private 拡張関数として追加する。
+    - [x] `saveComment` 内で `ReviewComment` 作成時の `filePath` に相対パスを使用する。
+    - [x] `restoreComments` 内のフィルタ条件 `it.filePath == filePath` を相対パス比較に変更する。
+    - [x] `CommentInlayManagerStorageTest.kt` のアサーション（3箇所）を相対パスに修正する。
+    - [x] テストを実行し、すべてのテストがパスすることを確認する。
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
+- [x] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.ja.md)
+- [x] Task: Phase 1 コミットし、本フェーズを完了とする
 
 ## フェーズ 2: 自動復元機能とイベントリスナーの実装 (TDD)
 
@@ -42,18 +42,34 @@
 - `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更 — 同一 Editor インスタンスでタブ切替（別ファイル）の場合にも復元を可能にする
 - `resolvedAt == null` フィルタも同時に追加
 
-- [ ] Task: 自動復元トリガーのテスト追加 (Red)
-    - [ ] ファイルが新規に開かれた時、対応する未解決コメントが復元されることを検証する統合テストを作成し、Red を確認する。
-    - [ ] エディタタブが切り替わった時、新しいファイルに対応する未解決コメントが復元されることを検証するテストを作成し、Red を確認する。
-    - [ ] 解決済み（`resolvedAt` 設定済み）コメントは復元されないことを検証するテストを作成し、Red を確認する。
-- [ ] Task: 自動復元トリガーの実装 (Green)
-    - [ ] `ReviewCommentEditorFileListener` クラスを作成し `FileEditorManagerListener` を実装する。
+- [x] Task: 自動復元トリガーのテスト追加 (Red)
+    - [x] ファイルが新規に開かれた時、対応する未解決コメントが復元されることを検証する統合テストを作成し、Red を確認する。
+    - [x] エディタタブが切り替わった時、新しいファイルに対応する未解決コメントが復元されることを検証するテストを作成し、Red を確認する。
+    - [x] 解決済み（`resolvedAt` 設定済み）コメントは復元されないことを検証するテストを作成し、Red を確認する。
+- [x] Task: 自動復元トリガーの実装 (Green)
+    - [x] `ReviewCommentEditorFileListener` クラスを作成し `FileEditorManagerListener` を実装する。
         - `fileOpened`: 開かれたファイルに対応するエディタを取得し `CommentInlayManager.restoreComments` を呼ぶ
         - `selectionChanged`: 新しく選択されたファイルに対応するエディタを取得し `CommentInlayManager.restoreComments` を呼ぶ
-    - [ ] `plugin.xml` に `editorFileEditorManagerListener` 拡張を追加する。
-    - [ ] `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更する。
-    - [ ] `restoreComments` 内のフィルタに `&& it.resolvedAt == null` を追加する。
-    - [ ] テストを実行し、すべてのテストがパスすることを確認する。
-    - [ ] `./gradlew detekt` および `./gradlew build` を実行し、ビルドと静的解析が正常に通ることを確認する。
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.ja.md)
-- [ ] Task: Phase 2 コミットし、本フェーズを完了とする
+    - [x] `plugin.xml` に `editorFileEditorManagerListener` 拡張を追加する。
+    - [x] `restoreComments` 内のガード条件を `state.filePath == filePath && state.commentInlays.isNotEmpty()` に変更する。
+    - [x] `restoreComments` 内のフィルタに `&& it.resolvedAt == null` を追加する。
+    - [x] テストを実行し、すべてのテストがパスすることを確認する。
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する。
+- [x] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.ja.md)
+- [x] Task: Phase 2 コミットし、本フェーズを完了とする
+
+## フェーズ 3: ファイルオープン時のガター設置 (TDD)
+
+### 設計方針
+- 既存の `ReviewCommentEditorFileListener.fileOpened` / `selectionChanged` 内で、`CommentInlayManager.restoreComments` 呼出後に `ReviewCommentEditorTracker.track(editor)` を呼びガターアイコンを設置する
+- `ReviewCommentEditorTracker.track` はエディタが未追跡の場合は追跡を開始し、既追跡の場合は `refresh` でガター位置を更新する
+- リスナー内の不要な null-safe 演算子（non-nullable 型に対する `?: return`）を除去する
+
+- [x] Task: ガター設置のテスト追加 (Red)
+    - [x] `fileOpened` 呼出後にエディタのガターアイコンが設置されることを検証するテストを作成
+- [x] Task: ガター設置の実装 (Green)
+    - [x] `ReviewCommentEditorFileListener.fileOpened` / `selectionChanged` に `ReviewCommentEditorTracker.track(editor)` を追加
+    - [x] テストを実行し、すべてのテストがパスすることを確認する
+    - [x] `./gradlew detekt` を実行し、コードスタイルが維持されていることを確認する
+- [x] Task: Conductor - ユーザー手動検証 'Phase 3' (Protocol in workflow.ja.md)
+- [x] Task: Phase 3 コミットし、本フェーズを完了とする
