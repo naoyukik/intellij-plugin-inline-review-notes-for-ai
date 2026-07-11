@@ -7,11 +7,11 @@
 
 ## フェーズ 0: 設計と調査
 
-- [ ] Task: 既存実装の調査と詳細設計
-    - [ ] CommentInputPanel のコンポーネント構造とフォーカス順序の調査を実施する
-    - [ ] Swing の InputMap/ActionMap によるキーバインド設定方法を確認する
-    - [ ] macOS / Windows のキーコード差異（Ctrl vs Meta）の対応方針を確定する
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 0' (Protocol in workflow.md)
+- [x] Task: 既存実装の調査と詳細設計
+    - [x] CommentInputPanel のコンポーネント構造とフォーカス順序の調査を実施する
+    - [x] Swing の InputMap/ActionMap によるキーバインド設定方法を確認する
+    - [x] macOS / Windows のキーコード差異（Ctrl vs Meta）の対応方針を確定する
+- [~] Task: Conductor - ユーザー手動検証 'Phase 0' (Protocol in workflow.md)
 - [ ] Task: Phase 0 コミットし、本フェーズを完了とする
 
 ## フェーズ 1: Save ショートカット Ctrl+Enter/Cmd+Enter の実装 (TDD)
@@ -19,7 +19,41 @@
 ### 設計方針
 - CommentInputPanel の textArea に InputMap（WHEN_FOCUSED）で Ctrl+Enter の KeyStroke を登録
 - 対応する ActionMap で saveButton.doClick() を呼び出す
-- プラットフォーム判定（OS.name もしくは KeyStroke.getKeyStroke の自動解決）で Ctrl と Meta を切り替える
+- プラットフォーム判定（SystemInfo.isMac）で Ctrl と Meta を切り替える
+
+### 具体的な実装計画
+1. **CommentInputPanel.kt** (`src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanel.kt`):
+   - initブロックに以下のコードを追加:
+     ```kotlin
+     val modifier = if (SystemInfo.isMac) KeyEvent.META_MASK else KeyEvent.CTRL_MASK
+     val keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, modifier)
+     textArea.inputMap.put(keyStroke, "save")
+     textArea.actionMap.put("save", object : AbstractAction() {
+         override fun actionPerformed(e: ActionEvent) {
+             saveButton.doClick()
+         }
+     })
+     ```
+   - 必要なimportを追加: `java.awt.event.KeyEvent`, `java.awt.event.ActionEvent`, `javax.swing.Action`, `com.intellij.openapi.util.SystemInfo`
+
+2. **CommentInputPanelTest.kt** (`src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanelTest.kt`):
+   - テストを追加:
+     ```kotlin
+     @Test
+     fun save_shortcut_invokes_on_save() {
+         var savedText = ""
+         val panel = CommentInputPanel(
+             onSave = { savedText = it },
+             onCancel = {},
+             onDelete = {},
+         )
+         panel.textArea.text = "ショートカット保存"
+         // Windows/Linux: Ctrl+Enter
+         val modifier = if (SystemInfo.isMac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
+         panel.textArea.dispatchEvent(KeyEvent(panel.textArea, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), modifier, KeyEvent.VK_ENTER, KeyEvent.CHAR_UNDEFINED))
+         assertEquals("ショートカット保存", savedText)
+     }
+     ```
 
 - [ ] Task: Save ショートカットのテスト追加 (Red)
     - [ ] textArea で Ctrl+Enter（Windows）を押下すると onSave が呼ばれるテストを CommentInputPanelTest に追加し Red を確認
@@ -37,6 +71,106 @@
 - フォーカス順: textArea → saveButton → cancelButton → deleteButton（表示時のみ）→ textArea の循環
 - Shift+Tab はデフォルトの逆方向フォーカス移動で対応
 - deleteButton 非表示時はフォーカスサイクルから自動的に除外
+
+### 具体的な実装計画
+1. **CommentInputPanel.kt** (`src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanel.kt`):
+   - カスタムFocusTraversalPolicyクラスを定義:
+     ```kotlin
+     private inner class CommentFocusTraversalPolicy : FocusTraversalPolicy() {
+         private val components: List<Component>
+             get() {
+                 val base = listOf<Component>(textArea, saveButton, cancelButton)
+                 return if (deleteButton.isVisible) base + deleteButton else base
+             }
+
+         override fun getComponentAfter(aContainer: Container, aComponent: Component): Component {
+             val index = components.indexOf(aComponent)
+             return if (index < components.size - 1) components[index + 1] else components.first()
+         }
+
+         override fun getComponentBefore(aContainer: Container, aComponent: Component): Component {
+             val index = components.indexOf(aComponent)
+             return if (index > 0) components[index - 1] else components.last()
+         }
+
+         override fun getFirstComponent(aContainer: Container): Component = components.first()
+
+         override fun getLastComponent(aContainer: Container): Component = components.last()
+
+         override fun getDefaultComponent(aContainer: Container): Component = components.first()
+     }
+     ```
+   - initブロックでfocusTraversalPolicyを設定:
+     ```kotlin
+     focusTraversalPolicy = CommentFocusTraversalPolicy()
+     isFocusCycleRoot = true
+     ```
+   - 必要なimportを追加: `java.awt.FocusTraversalPolicy`, `java.awt.Component`, `java.awt.Container`
+
+2. **CommentInputPanelTest.kt** (`src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanelTest.kt`):
+   - テストを追加:
+     ```kotlin
+     @Test
+     fun tab_focus_cycles_through_components() {
+         val panel = CommentInputPanel(
+             onSave = {},
+             onCancel = {},
+             onDelete = {},
+         )
+         panel.textArea.requestFocusInWindow()
+         assertTrue(panel.textArea.hasFocus())
+
+         // Tabキーでフォーカス移動
+         panel.textArea.dispatchEvent(KeyEvent(panel.textArea, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.saveButton.hasFocus())
+
+         panel.saveButton.dispatchEvent(KeyEvent(panel.saveButton, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.cancelButton.hasFocus())
+
+         panel.cancelButton.dispatchEvent(KeyEvent(panel.cancelButton, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.textArea.hasFocus())
+     }
+
+     @Test
+     fun shift_tab_focus_cycles_reverse() {
+         val panel = CommentInputPanel(
+             onSave = {},
+             onCancel = {},
+             onDelete = {},
+         )
+         panel.textArea.requestFocusInWindow()
+         assertTrue(panel.textArea.hasFocus())
+
+         // Shift+Tabキーで逆順フォーカス移動
+         panel.textArea.dispatchEvent(KeyEvent(panel.textArea, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), KeyEvent.SHIFT_DOWN_MASK, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.cancelButton.hasFocus())
+     }
+
+     @Test
+     fun delete_button_included_in_focus_cycle_when_visible() {
+         val panel = CommentInputPanel(
+             existingComment = "既存コメント",
+             onSave = {},
+             onCancel = {},
+             onDelete = {},
+         )
+         panel.textArea.requestFocusInWindow()
+         assertTrue(panel.textArea.hasFocus())
+
+         // テキストエリアから順にフォーカス移動
+         panel.textArea.dispatchEvent(KeyEvent(panel.textArea, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.saveButton.hasFocus())
+
+         panel.saveButton.dispatchEvent(KeyEvent(panel.saveButton, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.cancelButton.hasFocus())
+
+         panel.cancelButton.dispatchEvent(KeyEvent(panel.cancelButton, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.deleteButton.hasFocus())
+
+         panel.deleteButton.dispatchEvent(KeyEvent(panel.deleteButton, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED))
+         assertTrue(panel.textArea.hasFocus())
+     }
+     ```
 
 - [ ] Task: Tab フォーカス移動のテスト追加 (Red)
     - [ ] Tab キーで textArea → saveButton → cancelButton → textArea とフォーカスが循環するテストを追加し Red を確認
