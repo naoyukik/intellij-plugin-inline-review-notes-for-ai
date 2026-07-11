@@ -2,7 +2,10 @@ package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui
 
 import com.intellij.openapi.util.SystemInfo
 import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Container
 import java.awt.FlowLayout
+import java.awt.FocusTraversalPolicy
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import javax.swing.AbstractAction
@@ -63,6 +66,10 @@ class CommentInputPanel(
                 }
             },
         )
+
+        // Tab フォーカス移動
+        focusTraversalPolicy = CommentFocusTraversalPolicy()
+        isFocusCycleRoot = true
     }
 
     private fun buttonPanel(): JPanel =
@@ -71,6 +78,30 @@ class CommentInputPanel(
             add(cancelButton)
             add(saveButton)
         }
+
+    private inner class CommentFocusTraversalPolicy : FocusTraversalPolicy() {
+        private val components: List<Component>
+            get() {
+                val base = listOf<Component>(textArea, saveButton, cancelButton)
+                return if (deleteButton.isVisible) base + deleteButton else base
+            }
+
+        override fun getComponentAfter(aContainer: Container, aComponent: Component): Component {
+            val index = components.indexOf(aComponent)
+            return if (index < components.size - 1) components[index + 1] else components.first()
+        }
+
+        override fun getComponentBefore(aContainer: Container, aComponent: Component): Component {
+            val index = components.indexOf(aComponent)
+            return if (index > 0) components[index - 1] else components.last()
+        }
+
+        override fun getFirstComponent(aContainer: Container): Component = components.first()
+
+        override fun getLastComponent(aContainer: Container): Component = components.last()
+
+        override fun getDefaultComponent(aContainer: Container): Component = components.first()
+    }
 
     companion object {
         private const val componentPadding = 8

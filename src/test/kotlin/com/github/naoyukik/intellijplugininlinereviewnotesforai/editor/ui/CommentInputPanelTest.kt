@@ -92,4 +92,87 @@ class CommentInputPanelTest {
         assertEquals("既存コメント", panel.textArea.text)
         assertTrue(panel.deleteButton.isVisible)
     }
+
+    @Test
+    fun tab_focus_cycles_through_components() {
+        val panel = CommentInputPanel(
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+
+        // FocusTraversalPolicyの動作を直接検証
+        val policy = panel.focusTraversalPolicy
+        assertNotNull(policy)
+
+        // テキストエリアから次のコンポーネントはsaveButton
+        val afterTextArea = policy.getComponentAfter(panel, panel.textArea)
+        assertEquals(panel.saveButton, afterTextArea)
+
+        // saveButtonから次のコンポーネントはcancelButton
+        val afterSave = policy.getComponentAfter(panel, panel.saveButton)
+        assertEquals(panel.cancelButton, afterSave)
+
+        // cancelButtonから次のコンポーネントはtextArea（循環）
+        val afterCancel = policy.getComponentAfter(panel, panel.cancelButton)
+        assertEquals(panel.textArea, afterCancel)
+    }
+
+    @Test
+    fun shift_tab_focus_cycles_reverse() {
+        val panel = CommentInputPanel(
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+
+        // FocusTraversalPolicyの動作を直接検証
+        val policy = panel.focusTraversalPolicy
+        assertNotNull(policy)
+
+        // テキストエリアから前のコンポーネントはcancelButton（逆順循環）
+        val beforeTextArea = policy.getComponentBefore(panel, panel.textArea)
+        assertEquals(panel.cancelButton, beforeTextArea)
+
+        // cancelButtonから前のコンポーネントはsaveButton
+        val beforeCancel = policy.getComponentBefore(panel, panel.cancelButton)
+        assertEquals(panel.saveButton, beforeCancel)
+
+        // saveButtonから前のコンポーネントはtextArea
+        val beforeSave = policy.getComponentBefore(panel, panel.saveButton)
+        assertEquals(panel.textArea, beforeSave)
+    }
+
+    @Test
+    fun delete_button_included_in_focus_cycle_when_visible() {
+        val panel = CommentInputPanel(
+            existingComment = "既存コメント",
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+
+        // deleteButtonが表示されていることを確認
+        assertTrue(panel.deleteButton.isVisible)
+
+        // FocusTraversalPolicyの動作を直接検証
+        val policy = panel.focusTraversalPolicy
+        assertNotNull(policy)
+
+        // テキストエリアから次のコンポーネントはsaveButton
+        val afterTextArea = policy.getComponentAfter(panel, panel.textArea)
+        assertEquals(panel.saveButton, afterTextArea)
+
+        // saveButtonから次のコンポーネントはcancelButton
+        val afterSave = policy.getComponentAfter(panel, panel.saveButton)
+        assertEquals(panel.cancelButton, afterSave)
+
+        // cancelButtonから次のコンポーネントはdeleteButton（表示時）
+        val afterCancel = policy.getComponentAfter(panel, panel.cancelButton)
+        assertEquals(panel.deleteButton, afterCancel)
+
+        // deleteButtonから次のコンポーネントはtextArea（循環）
+        val afterDelete = policy.getComponentAfter(panel, panel.deleteButton)
+        assertEquals(panel.textArea, afterDelete)
+    }
 }
