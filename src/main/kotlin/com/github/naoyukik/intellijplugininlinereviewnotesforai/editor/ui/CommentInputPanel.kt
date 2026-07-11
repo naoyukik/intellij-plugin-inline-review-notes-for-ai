@@ -36,6 +36,8 @@ class CommentInputPanel(
     val cancelButton: JButton = JButton("Cancel")
     val deleteButton: JButton = JButton("Delete")
 
+    private val focusPolicy = CommentFocusTraversalPolicy()
+
     init {
         border = BorderFactory.createEmptyBorder(componentPadding, componentPadding, componentPadding, componentPadding)
 
@@ -67,8 +69,33 @@ class CommentInputPanel(
             },
         )
 
+        // Tab キーのフォーカス移動: JTextArea のデフォルト動作（タブ文字挿入）を無効化
+        val tabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)
+        textArea.inputMap.put(tabKeyStroke, "forward")
+        textArea.actionMap.put(
+            "forward",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    val next = focusPolicy.getComponentAfter(this@CommentInputPanel, textArea)
+                    next.requestFocusInWindow()
+                }
+            },
+        )
+
+        val shiftTabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
+        textArea.inputMap.put(shiftTabKeyStroke, "backward")
+        textArea.actionMap.put(
+            "backward",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    val prev = focusPolicy.getComponentBefore(this@CommentInputPanel, textArea)
+                    prev.requestFocusInWindow()
+                }
+            },
+        )
+
         // Tab フォーカス移動
-        focusTraversalPolicy = CommentFocusTraversalPolicy()
+        focusTraversalPolicy = focusPolicy
         isFocusCycleRoot = true
     }
 

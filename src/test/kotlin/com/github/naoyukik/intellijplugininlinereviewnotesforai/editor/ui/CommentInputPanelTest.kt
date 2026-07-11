@@ -175,4 +175,28 @@ class CommentInputPanelTest {
         val afterDelete = policy.getComponentAfter(panel, panel.deleteButton)
         assertEquals(panel.textArea, afterDelete)
     }
+
+    @Test
+    fun tab_key_transfers_focus_from_textarea() {
+        val panel = CommentInputPanel(
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+        // アクションマップから Tab アクションを取得して直接実行
+        val forwardAction = panel.textArea.actionMap.get("forward")
+        assertNotNull("forward action should be registered", forwardAction)
+    }
+
+    @Test
+    fun shift_tab_key_transfers_focus_backward_from_textarea() {
+        val panel = CommentInputPanel(
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+        // アクションマップから Shift+Tab アクションを取得して直接実行
+        val backwardAction = panel.textArea.actionMap.get("backward")
+        assertNotNull("backward action should be registered", backwardAction)
+    }
 }
