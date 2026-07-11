@@ -64,7 +64,7 @@
 - [x] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.md)
 - [x] Task: Phase 1 コミットし、本フェーズを完了とする
 
-## フェーズ 2: Tab フォーカス移動の実装 (TDD)
+## フェーズ 2: Tab フォーカス移動の実装 (TDD) [checkpoint: 99c9ad2]
 
 ### 設計方針
 - CommentInputPanel にカスタム FocusTraversalPolicy を設定
@@ -172,14 +172,14 @@
      }
      ```
 
-- [ ] Task: Tab フォーカス移動のテスト追加 (Red)
-    - [ ] Tab キーで textArea → saveButton → cancelButton → textArea とフォーカスが循環するテストを追加し Red を確認
-    - [ ] Shift+Tab で逆順にフォーカスが移動するテストを追加し Red を確認
-    - [ ] 編集モード（deleteButton 表示時）では deleteButton がフォーカスサイクルに含まれるテストを追加し Red を確認
-- [ ] Task: Tab フォーカス移動の実装 (Green)
-    - [ ] CommentInputPanel にカスタム FocusTraversalPolicy を実装・設定
-    - [ ] deleteButton の表示状態に応じてフォーカスサイクルを動的に変更
-    - [ ] 全てのテストがパスすることを確認
-    - [ ] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.md)
-- [ ] Task: Phase 2 コミットし、本フェーズを完了とする
+- [x] Task: Tab フォーカス移動のテスト追加 (Red)
+    - [x] Tab キーで textArea → saveButton → cancelButton → textArea とフォーカスが循環するテストを追加し Red を確認
+    - [x] Shift+Tab で逆順にフォーカスが移動するテストを追加し Red を確認
+    - [x] 編集モード（deleteButton 表示時）では deleteButton がフォーカスサイクルに含まれるテストを追加し Red を確認
+- [x] Task: Tab フォーカス移動の実装 (Green)
+    - [x] CommentInputPanel にカスタム FocusTraversalPolicy を実装・設定
+    - [x] deleteButton の表示状態に応じてフォーカスサイクルを動的に変更
+    - [x] 全てのテストがパスすることを確認
+    - [x] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
+- [x] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.md)
+- [x] Task: Phase 2 コミットし、本フェーズを完了とする
