@@ -4,10 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: GitHub Issue 24: feat: 既存ファイルを開いたときに保存済みコメントをエディタに復元する**
-*Link: [./tracks/024-restore-comments_20260706/](./tracks/024-restore-comments_20260706/)*
-
----
-
 - [ ] **Track: GitHub Issue 23: feat: 入力パネルのボタンにキーボード操作を対応させる**
 *Link: [./tracks/023-keyboard-shortcuts_20260710/](./tracks/023-keyboard-shortcuts_20260710/)*
