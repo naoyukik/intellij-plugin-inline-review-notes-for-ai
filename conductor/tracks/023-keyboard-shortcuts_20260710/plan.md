@@ -14,7 +14,7 @@
 - [~] Task: Conductor - ユーザー手動検証 'Phase 0' (Protocol in workflow.md)
 - [ ] Task: Phase 0 コミットし、本フェーズを完了とする
 
-## フェーズ 1: Save ショートカット Ctrl+Enter/Cmd+Enter の実装 (TDD)
+## フェーズ 1: Save ショートカット Ctrl+Enter/Cmd+Enter の実装 (TDD) [checkpoint: 1cd1bf9]
 
 ### 設計方針
 - CommentInputPanel の textArea に InputMap（WHEN_FOCUSED）で Ctrl+Enter の KeyStroke を登録
@@ -55,14 +55,14 @@
      }
      ```
 
-- [ ] Task: Save ショートカットのテスト追加 (Red)
-    - [ ] textArea で Ctrl+Enter（Windows）を押下すると onSave が呼ばれるテストを CommentInputPanelTest に追加し Red を確認
-- [ ] Task: Save ショートカットの実装 (Green)
-    - [ ] CommentInputPanel の init 内で textArea の InputMap/ActionMap に Ctrl+Enter/Cmd+Enter のキーバインドを追加
-    - [ ] 全てのテストがパスすることを確認
-    - [ ] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
-- [ ] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.md)
-- [ ] Task: Phase 1 コミットし、本フェーズを完了とする
+- [x] Task: Save ショートカットのテスト追加 (Red)
+    - [x] textArea で Ctrl+Enter（Windows）を押下すると onSave が呼ばれるテストを CommentInputPanelTest に追加し Red を確認
+- [x] Task: Save ショートカットの実装 (Green)
+    - [x] CommentInputPanel の init 内で textArea の InputMap/ActionMap に Ctrl+Enter/Cmd+Enter のキーバインドを追加
+    - [x] 全てのテストがパスすることを確認
+    - [x] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
+- [x] Task: Conductor - ユーザー手動検証 'Phase 1' (Protocol in workflow.md)
+- [x] Task: Phase 1 コミットし、本フェーズを完了とする
 
 ## フェーズ 2: Tab フォーカス移動の実装 (TDD)
 
