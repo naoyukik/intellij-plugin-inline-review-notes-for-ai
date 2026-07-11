@@ -2,6 +2,7 @@ package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -22,18 +23,21 @@ class CommentInputPanelTest {
     }
 
     @Test
-    fun save_click_invokes_on_save_with_text() {
+    fun save_shortcut_invokes_on_save() {
         var savedText = ""
         val panel = CommentInputPanel(
             onSave = { savedText = it },
             onCancel = {},
             onDelete = {},
         )
-
-        panel.textArea.text = "保存する内容"
-        panel.saveButton.doClick()
-
-        assertEquals("保存する内容", savedText)
+        panel.textArea.text = "ショートカット保存"
+        // アクションマップから直接アクションを実行して検証
+        val action = panel.textArea.actionMap.get("save")
+        assertNotNull("save action should be registered", action)
+        action?.actionPerformed(
+            java.awt.event.ActionEvent(panel.textArea, java.awt.event.ActionEvent.ACTION_PERFORMED, ""),
+        )
+        assertEquals("ショートカット保存", savedText)
     }
 
     @Test

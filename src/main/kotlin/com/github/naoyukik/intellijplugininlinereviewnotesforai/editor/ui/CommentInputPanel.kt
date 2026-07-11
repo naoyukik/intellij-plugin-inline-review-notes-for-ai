@@ -1,12 +1,17 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui
 
+import com.intellij.openapi.util.SystemInfo
 import java.awt.BorderLayout
 import java.awt.FlowLayout
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import javax.swing.AbstractAction
 import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.KeyStroke
 
 class CommentInputPanel(
     existingComment: String? = null,
@@ -45,6 +50,19 @@ class CommentInputPanel(
         }
 
         deleteButton.isVisible = existingComment != null
+
+        // Save ショートカット: Ctrl+Enter (Windows/Linux) / Cmd+Enter (macOS)
+        val modifier = if (SystemInfo.isMac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
+        val keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, modifier)
+        textArea.inputMap.put(keyStroke, "save")
+        textArea.actionMap.put(
+            "save",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    saveButton.doClick()
+                }
+            },
+        )
     }
 
     private fun buttonPanel(): JPanel =
