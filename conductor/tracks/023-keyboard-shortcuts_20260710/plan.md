@@ -183,3 +183,72 @@
     - [x] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
 - [x] Task: Conductor - ユーザー手動検証 'Phase 2' (Protocol in workflow.md)
 - [x] Task: Phase 2 コミットし、本フェーズを完了とする
+
+## フェーズ 3: Tab キーのフォーカス移動不具合修正 (TDD) [checkpoint: c2c3390]
+
+### 不具合の詳細
+textArea にフォーカスがある状態で Tab キーを押下すると、JTextArea のデフォルト動作により制御文字（タブ文字）が挿入され、FocusTraversalPolicy によるフォーカス移動が発動しない。
+
+### 設計方針
+- textArea の InputMap（WHEN_FOCUSED）で Tab キーのデフォルトアクションを無効化し、フォーカス移動アクションに置き換える
+- Shift+Tab も同様に逆方向フォーカス移動に置き換える
+
+### 具体的な実装計画
+1. **CommentInputPanel.kt** (`src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanel.kt`):
+   - initブロックに以下のコードを追加:
+     ```kotlin
+     // Tab キーのフォーカス移動: JTextArea のデフォルト動作（タブ文字挿入）を無効化
+     val tabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)
+     textArea.inputMap.put(tabKeyStroke, "forward")
+     textArea.actionMap.put("forward", object : AbstractAction() {
+         override fun actionPerformed(e: ActionEvent) {
+             transferFocus()
+         }
+     })
+
+     val shiftTabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
+     textArea.inputMap.put(shiftTabKeyStroke, "backward")
+     textArea.actionMap.put("backward", object : AbstractAction() {
+         override fun actionPerformed(e: ActionEvent) {
+             transferFocusBackward()
+         }
+     })
+     ```
+   - `transferFocus()` / `transferFocusBackward()` は `java.awt.Component` のメソッドで、設定済みの FocusTraversalPolicy に従ってフォーカスを移動させる
+
+2. **CommentInputPanelTest.kt** (`src/test/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/ui/CommentInputPanelTest.kt`):
+   - テストを追加:
+     ```kotlin
+     @Test
+     fun tab_key_transfers_focus_from_textarea() {
+         val panel = CommentInputPanel(
+             onSave = {},
+             onCancel = {},
+             onDelete = {},
+         )
+         // アクションマップから Tab アクションを取得して直接実行
+         val forwardAction = panel.textArea.actionMap.get("forward")
+         assertNotNull("forward action should be registered", forwardAction)
+     }
+
+     @Test
+     fun shift_tab_key_transfers_focus_backward_from_textarea() {
+         val panel = CommentInputPanel(
+             onSave = {},
+             onCancel = {},
+             onDelete = {},
+         )
+         // アクションマップから Shift+Tab アクションを取得して直接実行
+         val backwardAction = panel.textArea.actionMap.get("backward")
+         assertNotNull("backward action should be registered", backwardAction)
+     }
+     ```
+
+- [x] Task: Tab キー不具合修正のテスト追加 (Red)
+    - [x] textArea の InputMap に Tab / Shift+Tab アクションが登録されていることを検証するテストを追加し Red を確認
+- [x] Task: Tab キー不具合修正の実装 (Green)
+    - [x] CommentInputPanel の init 内で textArea の InputMap/ActionMap に Tab / Shift+Tab のキーバインドを追加
+    - [x] 全てのテストがパスすることを確認
+    - [x] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
+- [x] Task: Conductor - ユーザー手動検証 'Phase 3' (Protocol in workflow.md)
+- [ ] Task: Phase 3 コミットし、本フェーズを完了とする
