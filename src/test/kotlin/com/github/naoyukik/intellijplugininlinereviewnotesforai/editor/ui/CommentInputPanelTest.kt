@@ -23,6 +23,19 @@ class CommentInputPanelTest {
     }
 
     @Test
+    fun save_click_invokes_on_save_with_text() {
+        var savedText = ""
+        val panel = CommentInputPanel(
+            onSave = { savedText = it },
+            onCancel = {},
+            onDelete = {},
+        )
+        panel.textArea.text = "保存する内容"
+        panel.saveButton.doClick()
+        assertEquals("保存する内容", savedText)
+    }
+
+    @Test
     fun save_shortcut_invokes_on_save() {
         var savedText = ""
         val panel = CommentInputPanel(
