@@ -251,4 +251,4 @@ textArea にフォーカスがある状態で Tab キーを押下すると、JTe
     - [x] 全てのテストがパスすることを確認
     - [x] `./gradlew detekt` を実行しコードスタイルが維持されていることを確認
 - [x] Task: Conductor - ユーザー手動検証 'Phase 3' (Protocol in workflow.md)
-- [ ] Task: Phase 3 コミットし、本フェーズを完了とする
+- [x] Task: Phase 3 コミットし、本フェーズを完了とする [checkpoint: c2c3390]
