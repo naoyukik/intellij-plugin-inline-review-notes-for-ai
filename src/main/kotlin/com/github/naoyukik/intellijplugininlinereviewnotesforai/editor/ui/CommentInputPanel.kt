@@ -1,12 +1,20 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui
 
+import com.intellij.openapi.util.SystemInfo
 import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Container
 import java.awt.FlowLayout
+import java.awt.FocusTraversalPolicy
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import javax.swing.AbstractAction
 import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.KeyStroke
 
 class CommentInputPanel(
     existingComment: String? = null,
@@ -28,6 +36,8 @@ class CommentInputPanel(
     val cancelButton: JButton = JButton("Cancel")
     val deleteButton: JButton = JButton("Delete")
 
+    private val focusPolicy = CommentFocusTraversalPolicy()
+
     init {
         border = BorderFactory.createEmptyBorder(componentPadding, componentPadding, componentPadding, componentPadding)
 
@@ -45,6 +55,48 @@ class CommentInputPanel(
         }
 
         deleteButton.isVisible = existingComment != null
+
+        // Save ショートカット: Ctrl+Enter (Windows/Linux) / Cmd+Enter (macOS)
+        val modifier = if (SystemInfo.isMac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
+        val keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, modifier)
+        textArea.inputMap.put(keyStroke, "save")
+        textArea.actionMap.put(
+            "save",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    saveButton.doClick()
+                }
+            },
+        )
+
+        // Tab キーのフォーカス移動: JTextArea のデフォルト動作（タブ文字挿入）を無効化
+        val tabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)
+        textArea.inputMap.put(tabKeyStroke, "forward")
+        textArea.actionMap.put(
+            "forward",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    val next = focusPolicy.getComponentAfter(this@CommentInputPanel, textArea)
+                    next.requestFocusInWindow()
+                }
+            },
+        )
+
+        val shiftTabKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
+        textArea.inputMap.put(shiftTabKeyStroke, "backward")
+        textArea.actionMap.put(
+            "backward",
+            object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    val prev = focusPolicy.getComponentBefore(this@CommentInputPanel, textArea)
+                    prev.requestFocusInWindow()
+                }
+            },
+        )
+
+        // Tab フォーカス移動
+        focusTraversalPolicy = focusPolicy
+        isFocusCycleRoot = true
     }
 
     private fun buttonPanel(): JPanel =
@@ -53,6 +105,30 @@ class CommentInputPanel(
             add(cancelButton)
             add(saveButton)
         }
+
+    private inner class CommentFocusTraversalPolicy : FocusTraversalPolicy() {
+        private val components: List<Component>
+            get() {
+                val base = listOf<Component>(textArea, saveButton, cancelButton)
+                return if (deleteButton.isVisible) base + deleteButton else base
+            }
+
+        override fun getComponentAfter(aContainer: Container, aComponent: Component): Component {
+            val index = components.indexOf(aComponent)
+            return if (index < components.size - 1) components[index + 1] else components.first()
+        }
+
+        override fun getComponentBefore(aContainer: Container, aComponent: Component): Component {
+            val index = components.indexOf(aComponent)
+            return if (index > 0) components[index - 1] else components.last()
+        }
+
+        override fun getFirstComponent(aContainer: Container): Component = components.first()
+
+        override fun getLastComponent(aContainer: Container): Component = components.last()
+
+        override fun getDefaultComponent(aContainer: Container): Component = components.first()
+    }
 
     companion object {
         private const val componentPadding = 8
