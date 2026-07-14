@@ -19,14 +19,31 @@ Comments are saved to `.inline-review-notes/{branch}.json` on a per-branch basis
 - Gutter add-button appears when selecting a line or line range
 - Inline comment display after input
 - Click existing comments to re-edit or delete
-- Per-branch persistence: `.inline-review-notes/<branch>.json`
+- Per-branch persistence: `.inline-review-notes/<branch>.json` (file is created automatically using the current branch name)
 - Comments with `resolvedAt` are treated as resolved
+
+## Keyboard Shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Save comment | <kbd>Ctrl+Enter</kbd> (Windows/Linux) / <kbd>Cmd+Enter</kbd> (macOS) |
+| Move focus to next field | <kbd>Tab</kbd> |
+| Move focus to previous field | <kbd>Shift+Tab</kbd> |
 
 ## Installation
 
 <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > Search for "Inline Review Notes for AI".
 
 Or download from [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/32674) and install manually.
+
+## Usage
+
+1. Select a line or line range in the editor
+2. Click the **gutter plus button** or right-click and select **Add Inline Review Notes**
+3. Enter your comment in the panel and click **Save**
+4. The comment is saved to `.inline-review-notes/{branch}.json` (using the current branch name)
+5. Use an AI agent skill or prompt to load the JSON and process the comments
+6. Resolved comments are hidden from the editor
 
 ## Data Format
 
@@ -35,3 +52,19 @@ Comments are stored in `.inline-review-notes/<branch>.json`.
 - `filePath` is relative to the project root
 - Resolution status is expressed by the presence or absence of `resolvedAt`
 - The `.inline-review-notes/` directory is excluded from version control (`.gitignore` recommended)
+
+## Recommended: AI Agent Skills
+
+To get the most out of this plugin, we recommend configuring AI agent skills that automate comment processing.
+
+### Example: Load and Process Comments
+
+```
+@./.inline-review-notes/{current_branch}.json and follow the comment instructions. For resolved items, add resolvedAt with the current date.
+```
+
+### Example: Clean Up Stale Comment Files
+
+```
+@./.inline-review-notes/ and compare with local git branches. Delete files for branches that no longer exist.
+```
