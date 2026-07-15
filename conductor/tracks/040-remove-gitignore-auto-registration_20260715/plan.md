@@ -2,11 +2,11 @@
 
 ## Phase 0: Research and Detailed Design
 
-- [ ] Task: Review existing code and create evidence report
-    - [ ] `ReviewCommentStorage.kt` の `ensureGitignoreEntry()` メソッドと `save()` の関係を確認
-    - [ ] `ReviewCommentStorageTest.kt` の `save_writes_json_and_updates_gitignore_once` テストの確認
-    - [ ] 他に `.gitignore` 操作を行っている箇所がないか確認
-    - [ ] `evidence_report.md` を作成
+- [x] Task: Review existing code and create evidence report
+    - [x] `ReviewCommentStorage.kt` の `ensureGitignoreEntry()` メソッドと `save()` の関係を確認
+    - [x] `ReviewCommentStorageTest.kt` の `save_writes_json_and_updates_gitignore_once` テストの確認
+    - [x] 他に `.gitignore` 操作を行っている箇所がないか確認
+    - [x] `evidence_report.md` を作成
 - [ ] Task: Conductor - User Manual Verification 'Phase 0' (Protocol in workflow.md)
 
 ## Phase 1: Implementation
