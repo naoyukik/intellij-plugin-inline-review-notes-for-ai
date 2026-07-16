@@ -6,6 +6,12 @@
 
 ### Changed
 
+- Removed automatic `.gitignore` registration for `.inline-review-notes/` directory
+
+## [0.1.0] - 2026-07-15
+
+### Changed
+
 - Changed so that comments can be saved with Ctrl+Enter/Cmd+Enter while editing
 - Changed so that the Tab key now moves focus to the button while editing
 
