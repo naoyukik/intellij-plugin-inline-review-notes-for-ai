@@ -90,42 +90,17 @@ class ReviewCommentStorage(
      * レビューコメントの保存。
      *
      * レビューコメントをストレージファイルに保存します。
-     * 保存先のディレクトリが存在しない場合は作成し、`.gitignore` にストレージディレクトリが登録されているか確認します。
+     * 保存先のディレクトリが存在しない場合は作成します。
      *
      * @param document 保存するレビューコメントドキュメント。
      */
     fun save(document: ReviewCommentDocument) {
         val storageFile = resolveStorageFilePath()
         storageFile.createParentDirectories()
-        ensureGitignoreEntry()
         storageFile.writeText(
             json.encodeToString(ReviewCommentDocument.serializer(), document),
             Charsets.UTF_8,
         )
-    }
-
-    private fun ensureGitignoreEntry() {
-        val gitignoreFile = projectRoot.resolve(GITIGNORE_FILE)
-        val currentContent = readTextOrNull(gitignoreFile)
-
-        when {
-            currentContent == null -> gitignoreFile.writeText(
-                "$GITIGNORE_ENTRY${System.lineSeparator()}",
-                Charsets.UTF_8,
-            )
-            currentContent.lineSequence().any { it.trim() == GITIGNORE_ENTRY } -> Unit
-            else -> gitignoreFile.writeText(
-                buildString {
-                    append(currentContent)
-                    if (currentContent.isNotEmpty() && !currentContent.endsWith(System.lineSeparator())) {
-                        append(System.lineSeparator())
-                    }
-                    append(GITIGNORE_ENTRY)
-                    append(System.lineSeparator())
-                },
-                Charsets.UTF_8,
-            )
-        }
     }
 
     private fun resolveGitBranch(projectRoot: Path): String? =
@@ -150,8 +125,6 @@ class ReviewCommentStorage(
 
     companion object {
         private const val STORAGE_DIRECTORY = ".inline-review-notes"
-        private const val GITIGNORE_FILE = ".gitignore"
-        private const val GITIGNORE_ENTRY = ".inline-review-notes/"
         private const val DEFAULT_BRANCH_NAME = "default"
         private const val DETACHED_HEAD = "HEAD"
     }
