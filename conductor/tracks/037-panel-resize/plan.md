@@ -14,18 +14,18 @@
 
 ## Phase 1: Implementation
 
-- [ ] Task: Remove fixed size settings from CommentInputPanel (defaultRows, defaultColumns)
-- [ ] Task: Add `calculateInitialWidth(editorWidth: Int): Int` method to CommentInputPanel
-- [ ] Task: Add `calculateHeight(text: String): Int` method with min/max constraints
-- [ ] Task: Implement `updatePanelSize(editorWidth: Int)` method in CommentInputPanel
-- [ ] Task: Add ComponentAdapter to editor.contentComponent in openInputPanel()
-- [ ] Task: Add DocumentListener to JTextArea for line count changes
-- [ ] Task: Update createInputPopup() to handle programmatic resize
-- [ ] Task: Update disposeInputInlay() to clean up listeners
-- [ ] Task: Write unit tests for dynamic size calculation methods
-- [ ] Task: Run tests
-- [ ] Task: Run static analysis (detekt)
-- [ ] Task: Commit changes
+- [x] Task: Remove fixed size settings from CommentInputPanel (defaultRows, defaultColumns)
+- [x] Task: Add `calculateInitialWidth(editorWidth: Int): Int` method to CommentInputPanel
+- [x] Task: Add `calculateHeight(text: String): Int` method with min/max constraints
+- [x] Task: Implement `updatePanelSize(editorWidth: Int)` method in CommentInputPanel
+- [x] Task: Add ComponentAdapter to editor.contentComponent in openInputPanel()
+- [x] Task: Add DocumentListener to JTextArea for line count changes
+- [x] Task: Update createInputPopup() to handle programmatic resize
+- [x] Task: Update disposeInputInlay() to clean up listeners
+- [x] Task: Write unit tests for dynamic size calculation methods
+- [x] Task: Run tests
+- [x] Task: Run static analysis (detekt)
+- [~] Task: Commit changes
 - [ ] Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)
 
 ## Phase 2: Verification
