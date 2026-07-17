@@ -2,24 +2,27 @@
 
 ## Phase 0: Research and Detailed Design
 
-- [ ] Task: Research CommentInputPanel structure and current size handling
-- [ ] Task: Investigate editor pane resize event mechanism
-- [ ] Task: Design dynamic size calculation algorithm
-- [ ] Task: Create evidence_report.md with findings
-- [ ] Task: Update Phase 1+ tasks based on evidence_report.md findings
-- [ ] Task: Run tests
-- [ ] Task: Run static analysis (detekt)
-- [ ] Task: Commit changes
+- [x] Task: Research CommentInputPanel structure and current size handling
+- [x] Task: Investigate editor pane resize event mechanism
+- [x] Task: Design dynamic size calculation algorithm
+- [x] Task: Create evidence_report.md with findings
+- [x] Task: Update Phase 1+ tasks based on evidence_report.md findings
+- [x] Task: Run tests
+- [x] Task: Run static analysis (detekt)
+- [x] Task: Commit changes [commit: ee08022]
 - [ ] Task: Conductor - User Manual Verification 'Phase 0' (Protocol in workflow.md)
 
 ## Phase 1: Implementation
 
-- [ ] Task: Remove fixed size settings from CommentInputPanel
-- [ ] Task: Implement dynamic width calculation (60% of editor pane)
-- [ ] Task: Implement dynamic height calculation based on text lines
-- [ ] Task: Add min/max height constraints
-- [ ] Task: Implement editor pane resize listener
-- [ ] Task: Write unit tests for dynamic size calculation
+- [ ] Task: Remove fixed size settings from CommentInputPanel (defaultRows, defaultColumns)
+- [ ] Task: Add `calculateInitialWidth(editorWidth: Int): Int` method to CommentInputPanel
+- [ ] Task: Add `calculateHeight(text: String): Int` method with min/max constraints
+- [ ] Task: Implement `updatePanelSize(editorWidth: Int)` method in CommentInputPanel
+- [ ] Task: Add ComponentAdapter to editor.contentComponent in openInputPanel()
+- [ ] Task: Add DocumentListener to JTextArea for line count changes
+- [ ] Task: Update createInputPopup() to handle programmatic resize
+- [ ] Task: Update disposeInputInlay() to clean up listeners
+- [ ] Task: Write unit tests for dynamic size calculation methods
 - [ ] Task: Run tests
 - [ ] Task: Run static analysis (detekt)
 - [ ] Task: Commit changes
