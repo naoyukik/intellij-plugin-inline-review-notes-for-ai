@@ -28,7 +28,7 @@
 - [x] Task: Commit changes [commit: c823b71]
 - [ ] Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)
 
-## Phase 2: Verification
+## Phase 2: Verification [checkpoint: 2f275b2]
 
 - [x] Task: Run full test suite
 - [x] Task: Verify panel behavior on editor resize
