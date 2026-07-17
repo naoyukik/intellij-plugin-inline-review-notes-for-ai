@@ -300,19 +300,4 @@ class CommentInputPanelTest {
         // エディタ幅に応じて列数が更新される
         assertTrue("Columns should be updated", newColumns != initialColumns)
     }
-
-    @Test
-    fun resize_listener_is_called_on_update() {
-        val panel = CommentInputPanel(
-            onSave = {},
-            onCancel = {},
-            onDelete = {},
-        )
-
-        var calledWidth = 0
-        panel.setResizeListener { calledWidth = it }
-        panel.updatePanelSize(1000)
-
-        assertEquals(1000, calledWidth)
-    }
 }

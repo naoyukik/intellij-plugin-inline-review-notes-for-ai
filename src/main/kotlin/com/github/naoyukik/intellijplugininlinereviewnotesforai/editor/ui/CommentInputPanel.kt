@@ -39,7 +39,6 @@ class CommentInputPanel(
     val deleteButton: JButton = JButton("Delete")
 
     private val focusPolicy = CommentFocusTraversalPolicy()
-    private var resizeListener: ((Int) -> Unit)? = null
 
     init {
         border = BorderFactory.createEmptyBorder(componentPadding, componentPadding, componentPadding, componentPadding)
@@ -123,11 +122,6 @@ class CommentInputPanel(
         val newWidth = calculateInitialWidth(editorWidth)
         val columns = (newWidth / charWidth).toInt().coerceAtLeast(minColumns)
         textArea.columns = columns
-        resizeListener?.invoke(newWidth)
-    }
-
-    fun setResizeListener(listener: (Int) -> Unit) {
-        resizeListener = listener
     }
 
     private fun updateHeight() {
