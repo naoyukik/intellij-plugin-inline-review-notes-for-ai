@@ -1,6 +1,6 @@
 # Track 037-panel-resize Implementation Plan
 
-## Phase 0: Research and Detailed Design
+## Phase 0: Research and Detailed Design [checkpoint: 390beaa]
 
 - [x] Task: Research CommentInputPanel structure and current size handling
 - [x] Task: Investigate editor pane resize event mechanism
