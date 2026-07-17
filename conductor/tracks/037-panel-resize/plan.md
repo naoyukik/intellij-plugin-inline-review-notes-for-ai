@@ -30,10 +30,10 @@
 
 ## Phase 2: Verification
 
-- [ ] Task: Run full test suite
-- [ ] Task: Verify panel behavior on editor resize
-- [ ] Task: Verify panel height adjusts with text input
-- [ ] Task: Run tests
-- [ ] Task: Run static analysis (detekt)
-- [ ] Task: Commit changes
+- [x] Task: Run full test suite
+- [x] Task: Verify panel behavior on editor resize
+- [x] Task: Verify panel height adjusts with text input
+- [x] Task: Run tests
+- [x] Task: Run static analysis (detekt)
+- [~] Task: Commit changes
 - [ ] Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)
