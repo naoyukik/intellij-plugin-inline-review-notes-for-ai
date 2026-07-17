@@ -12,7 +12,7 @@
 - [x] Task: Commit changes [commit: ee08022]
 - [ ] Task: Conductor - User Manual Verification 'Phase 0' (Protocol in workflow.md)
 
-## Phase 1: Implementation
+## Phase 1: Implementation [checkpoint: bc1edfe]
 
 - [x] Task: Remove fixed size settings from CommentInputPanel (defaultRows, defaultColumns)
 - [x] Task: Add `calculateInitialWidth(editorWidth: Int): Int` method to CommentInputPanel
