@@ -17,6 +17,8 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.nio.file.Path
 import java.time.OffsetDateTime
 import java.util.IdentityHashMap
@@ -42,6 +44,7 @@ object CommentInlayManager {
         state.currentEditLineRange = lineRange
         state.currentEditCommentId = existingCommentId
         state.disposeInputInlay()
+        state.removeComponentListener(editor)
 
         if (existingCommentId != null) {
             state.disposeCommentInlay(existingCommentId)
@@ -53,6 +56,21 @@ object CommentInlayManager {
             onCancel = { cancelComment(editor) },
             onDelete = { deleteComment(editor) },
         )
+
+        // エディタリサイズ時のパネル幅更新リスナー
+        val componentListener = object : ComponentAdapter() {
+            override fun componentResized(e: ComponentEvent) {
+                val popup = state.popup ?: return
+                if (popup.isDisposed) return
+                inputPanel.updatePanelSize(editor.contentComponent.width)
+            }
+        }
+        editor.contentComponent.addComponentListener(componentListener)
+        state.componentListener = componentListener
+
+        // 初期サイズ設定
+        inputPanel.updatePanelSize(editor.contentComponent.width)
+
         state.inputPanel = inputPanel
         state.popup = createInputPopup(inputPanel)
         state.popup?.show(createPopupLocation(editor, lineRange))
@@ -74,6 +92,7 @@ object CommentInlayManager {
     fun releaseEditor(editor: Editor) {
         editorStates.remove(editor)?.let { state ->
             state.commentInlays.values.forEach { Disposer.dispose(it) }
+            state.removeComponentListener(editor)
             state.disposeInputInlay()
         }
     }
@@ -288,11 +307,17 @@ object CommentInlayManager {
         var inputPanel: CommentInputPanel? = null
         var popup: JBPopup? = null
         var mouseListener: EditorMouseListener? = null
+        var componentListener: ComponentAdapter? = null
 
         fun disposeInputInlay() {
             popup?.cancel()
             popup = null
             inputPanel = null
+        }
+
+        fun removeComponentListener(editor: Editor) {
+            componentListener?.let { editor.contentComponent.removeComponentListener(it) }
+            componentListener = null
         }
 
         fun disposeCommentInlay(commentId: String) {
