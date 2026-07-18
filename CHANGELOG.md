@@ -7,6 +7,7 @@
 ### Changed
 
 - Removed automatic `.gitignore` registration for `.inline-review-notes/` directory
+- Changed comment input panel to dynamically resize based on editor width (60%) and text line count
 
 ## [0.1.0] - 2026-07-15
 
