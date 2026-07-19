@@ -4,6 +4,7 @@ import com.intellij.openapi.util.SystemInfo
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.FocusTraversalPolicy
 import java.awt.event.ActionEvent
@@ -38,6 +39,7 @@ class CommentInputPanel(
     val cancelButton: JButton = JButton("Cancel")
     val deleteButton: JButton = JButton("Delete")
 
+    private var configuredWidth: Int? = null
     private val focusPolicy = CommentFocusTraversalPolicy()
 
     init {
@@ -118,10 +120,18 @@ class CommentInputPanel(
         return effectiveLines * lineHeight + 2 * componentPadding
     }
 
+    override fun getPreferredSize(): Dimension {
+        val preferredSize = super.getPreferredSize()
+        val width = configuredWidth ?: return preferredSize
+        return Dimension(width, preferredSize.height)
+    }
+
     fun updatePanelSize(editorWidth: Int) {
         val newWidth = calculateInitialWidth(editorWidth)
         val columns = (newWidth / charWidth).toInt().coerceAtLeast(minColumns)
         textArea.columns = columns
+        configuredWidth = newWidth
+        revalidate()
     }
 
     private fun updateHeight() {

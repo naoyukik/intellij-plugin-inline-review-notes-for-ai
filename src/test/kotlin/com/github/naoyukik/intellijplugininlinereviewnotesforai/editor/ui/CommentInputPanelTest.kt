@@ -238,6 +238,7 @@ class CommentInputPanelTest {
         panel.updatePanelSize(1000)
 
         assertEquals(75, panel.textArea.columns)
+        assertEquals(600, panel.preferredSize.width)
     }
 
     @Test
