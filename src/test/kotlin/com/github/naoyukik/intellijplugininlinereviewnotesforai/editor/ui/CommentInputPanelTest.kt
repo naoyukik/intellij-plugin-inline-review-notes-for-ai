@@ -227,6 +227,20 @@ class CommentInputPanelTest {
     }
 
     @Test
+    fun edit_mode_uses_same_initial_width_calculation() {
+        val panel = CommentInputPanel(
+            existingComment = "既存コメント",
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+
+        panel.updatePanelSize(1000)
+
+        assertEquals(75, panel.textArea.columns)
+    }
+
+    @Test
     fun calculateInitialWidth_respects_minimum_width() {
         val panel = CommentInputPanel(
             onSave = {},
