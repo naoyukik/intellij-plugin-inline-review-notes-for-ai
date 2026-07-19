@@ -40,6 +40,7 @@ class CommentInputPanel(
     val deleteButton: JButton = JButton("Delete")
 
     private var configuredWidth: Int? = null
+    private var onSizeChanged: () -> Unit = {}
     private val focusPolicy = CommentFocusTraversalPolicy()
 
     init {
@@ -104,9 +105,9 @@ class CommentInputPanel(
 
         // テキスト変更時の高さ動的調整
         textArea.document.addDocumentListener(object : DocumentListener {
-            override fun insertUpdate(e: DocumentEvent) = updateHeight()
-            override fun removeUpdate(e: DocumentEvent) = updateHeight()
-            override fun changedUpdate(e: DocumentEvent) = updateHeight()
+            override fun insertUpdate(e: DocumentEvent) = updateHeightAndNotify()
+            override fun removeUpdate(e: DocumentEvent) = updateHeightAndNotify()
+            override fun changedUpdate(e: DocumentEvent) = updateHeightAndNotify()
         })
     }
 
@@ -134,9 +135,18 @@ class CommentInputPanel(
         revalidate()
     }
 
+    fun setOnSizeChanged(callback: () -> Unit) {
+        onSizeChanged = callback
+    }
+
     private fun updateHeight() {
         val lines = textArea.text.lines().size.coerceIn(minLines, maxLines)
         textArea.rows = lines
+    }
+
+    private fun updateHeightAndNotify() {
+        updateHeight()
+        onSizeChanged()
     }
 
     private fun buttonPanel(): JPanel =

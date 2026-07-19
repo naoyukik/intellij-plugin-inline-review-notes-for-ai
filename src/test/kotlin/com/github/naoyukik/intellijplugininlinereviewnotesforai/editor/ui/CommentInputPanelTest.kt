@@ -242,6 +242,28 @@ class CommentInputPanelTest {
     }
 
     @Test
+    fun updatePanelSize_updates_edit_panel_width_for_successive_editor_widths() {
+        val panel = CommentInputPanel(
+            existingComment = "既存コメント",
+            onSave = {},
+            onCancel = {},
+            onDelete = {},
+        )
+
+        panel.updatePanelSize(100)
+        assertEquals(300, panel.preferredSize.width)
+        assertEquals(37, panel.textArea.columns)
+
+        panel.updatePanelSize(1000)
+        assertEquals(600, panel.preferredSize.width)
+        assertEquals(75, panel.textArea.columns)
+
+        panel.updatePanelSize(2000)
+        assertEquals(800, panel.preferredSize.width)
+        assertEquals(100, panel.textArea.columns)
+    }
+
+    @Test
     fun calculateInitialWidth_respects_minimum_width() {
         val panel = CommentInputPanel(
             onSave = {},

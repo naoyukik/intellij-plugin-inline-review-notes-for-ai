@@ -17,6 +17,8 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.nio.file.Path
 import java.time.OffsetDateTime
 import java.util.IdentityHashMap
@@ -42,6 +44,7 @@ object CommentInlayManager {
         state.currentEditLineRange = lineRange
         state.currentEditCommentId = existingCommentId
         state.disposeInputInlay()
+        state.removeComponentListener(editor)
 
         if (existingCommentId != null) {
             state.disposeCommentInlay(existingCommentId)
@@ -53,13 +56,24 @@ object CommentInlayManager {
             onCancel = { cancelComment(editor) },
             onDelete = { deleteComment(editor) },
         )
+        inputPanel.setOnSizeChanged { packInputPopup(state) }
 
         // 初期サイズ設定
-        inputPanel.updatePanelSize(editor.contentComponent.width)
+        val editorWidth = editor.contentComponent.width
+        inputPanel.updatePanelSize(editorWidth)
+        state.lastInputPanelEditorWidth = editorWidth
 
         state.inputPanel = inputPanel
         state.popup = createInputPopup(inputPanel)
         state.popup?.show(createPopupLocation(editor, lineRange))
+
+        val componentListener = object : ComponentAdapter() {
+            override fun componentResized(event: ComponentEvent) {
+                resizeInputPopup(editor, state)
+            }
+        }
+        editor.contentComponent.addComponentListener(componentListener)
+        state.componentListener = componentListener
     }
 
     fun hasInputPanel(editor: Editor): Boolean = editorStates[editor]?.inputPanel != null
@@ -78,8 +92,24 @@ object CommentInlayManager {
     fun releaseEditor(editor: Editor) {
         editorStates.remove(editor)?.let { state ->
             state.commentInlays.values.forEach { Disposer.dispose(it) }
+            state.removeComponentListener(editor)
             state.disposeInputInlay()
         }
+    }
+
+    private fun resizeInputPopup(editor: Editor, state: EditorState) {
+        val panel = state.inputPanel ?: return
+        val editorWidth = editor.contentComponent.width
+        if (editorWidth == state.lastInputPanelEditorWidth) return
+        panel.updatePanelSize(editorWidth)
+        state.lastInputPanelEditorWidth = editorWidth
+        packInputPopup(state)
+    }
+
+    private fun packInputPopup(state: EditorState) {
+        state.popup
+            ?.takeUnless { it.isDisposed }
+            ?.pack(true, true)
     }
 
     @Suppress("LoopWithTooManyJumpStatements")
@@ -292,11 +322,19 @@ object CommentInlayManager {
         var inputPanel: CommentInputPanel? = null
         var popup: JBPopup? = null
         var mouseListener: EditorMouseListener? = null
+        var componentListener: ComponentAdapter? = null
+        var lastInputPanelEditorWidth: Int? = null
 
         fun disposeInputInlay() {
             popup?.cancel()
             popup = null
             inputPanel = null
+            lastInputPanelEditorWidth = null
+        }
+
+        fun removeComponentListener(editor: Editor) {
+            componentListener?.let { editor.contentComponent.removeComponentListener(it) }
+            componentListener = null
         }
 
         fun disposeCommentInlay(commentId: String) {
