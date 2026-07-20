@@ -15,8 +15,6 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 import javax.swing.KeyStroke
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 
 class CommentInputPanel(
     existingComment: String? = null,
@@ -28,7 +26,7 @@ class CommentInputPanel(
     val textArea: JTextArea = JTextArea().apply {
         lineWrap = true
         wrapStyleWord = true
-        rows = minLines
+        rows = defaultRows
         columns = defaultColumns
         border = BorderFactory.createEmptyBorder(componentPadding, componentPadding, componentPadding, componentPadding)
         text = existingComment.orEmpty()
@@ -99,34 +97,6 @@ class CommentInputPanel(
         // Tab フォーカス移動
         focusTraversalPolicy = focusPolicy
         isFocusCycleRoot = true
-
-        // テキスト変更時の高さ動的調整
-        textArea.document.addDocumentListener(object : DocumentListener {
-            override fun insertUpdate(e: DocumentEvent) = updateHeight()
-            override fun removeUpdate(e: DocumentEvent) = updateHeight()
-            override fun changedUpdate(e: DocumentEvent) = updateHeight()
-        })
-    }
-
-    fun calculateInitialWidth(editorWidth: Int): Int {
-        return (editorWidth * WIDTH_RATIO).toInt().coerceIn(minWidth, maxWidth)
-    }
-
-    fun calculateHeight(text: String): Int {
-        val lineCount = text.lines().size.coerceAtLeast(1)
-        val effectiveLines = (lineCount + EXTRA_LINES).coerceIn(minLines, maxLines)
-        return effectiveLines * lineHeight + 2 * componentPadding
-    }
-
-    fun updatePanelSize(editorWidth: Int) {
-        val newWidth = calculateInitialWidth(editorWidth)
-        val columns = (newWidth / charWidth).toInt().coerceAtLeast(minColumns)
-        textArea.columns = columns
-    }
-
-    private fun updateHeight() {
-        val lines = textArea.text.lines().size.coerceIn(minLines, maxLines)
-        textArea.rows = lines
     }
 
     private fun buttonPanel(): JPanel =
@@ -162,16 +132,8 @@ class CommentInputPanel(
 
     companion object {
         private const val componentPadding = 8
+        private const val defaultRows = 5
         private const val defaultColumns = 40
         private const val buttonGap = 8
-        private const val WIDTH_RATIO = 0.6
-        private const val minLines = 3
-        private const val maxLines = 15
-        private const val EXTRA_LINES = 2
-        private const val minWidth = 300
-        private const val maxWidth = 800
-        private const val minColumns = 20
-        private const val lineHeight = 20
-        private const val charWidth = 8
     }
 }
