@@ -21,13 +21,16 @@ description: コミットメッセージの型 (type) 定義と具体例。基�
 
 ## 2. 具体例 (Examples)
 
+なお **Co-Authored-By: {AI Trailer}**は基本的に AI が生成した内容を示すため必須。
+
+
 ### 機能追加とIssue連携
 ```text
-feat: 設定ダイアログにフォントスタイル選択を追加
+feat: 設定ダイアログにフォントスタイル選択を追加 
 
 ref: 110
 
-Co-Authored-By: gemini-cli <218195315+gemini-cli@users.noreply.github.com>
+Co-Authored-By: {AI Trailer}
 ```
 
 ### アーキテクチャ改善
@@ -36,5 +39,5 @@ refactor: GUI Driver から Infrastructure への直接依存を排除
 
 ref: 117
 
-Co-Authored-By: gemini-cli <218195315+gemini-cli@users.noreply.github.com>
+Co-Authored-By: {AI Trailer}
 ```
