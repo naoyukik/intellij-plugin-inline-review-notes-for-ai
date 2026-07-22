@@ -1,0 +1,8 @@
+{
+  "track_id": "038-file-auto-reload_20260720",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-20T12:00:00Z",
+  "updated_at": "2026-07-20T12:00:00Z",
+  "description": "feat: ファイル変更時にコメントを自動再ロードする"
+}
