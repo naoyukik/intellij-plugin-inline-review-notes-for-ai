@@ -78,6 +78,24 @@ object CommentInlayManager {
         }
     }
 
+    fun reloadComments(editor: Editor, project: Project, filePath: String) {
+        val state = editorStates[editor]
+        if (state != null) {
+            state.commentInlays.values.forEach { Disposer.dispose(it) }
+            state.commentInlays.clear()
+            state.commentRenderers.clear()
+            state.filePath = null
+        }
+        restoreComments(editor, project, filePath)
+    }
+
+    fun clearAllComments(editor: Editor) {
+        val state = editorStates[editor] ?: return
+        state.commentInlays.values.forEach { Disposer.dispose(it) }
+        state.commentInlays.clear()
+        state.commentRenderers.clear()
+    }
+
     @Suppress("LoopWithTooManyJumpStatements")
     fun restoreComments(editor: Editor, project: Project, filePath: String) {
         val state = editorStates.getOrPut(editor) { EditorState() }
