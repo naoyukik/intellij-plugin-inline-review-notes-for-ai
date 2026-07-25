@@ -103,4 +103,42 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
         assertFalse(CommentInlayManager.hasInputPanel(editor))
         assertFalse(CommentInlayManager.hasBlockRenderer(editor))
     }
+
+    fun test_reloadComments_restores_saved_comment() {
+        myFixture.configureByText("Bar.kt", "line1\nline2\nline3\n")
+        val editor = myFixture.editor
+        CommentInlayManager.releaseEditor(editor)
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "リロードテスト"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+
+        CommentInlayManager.reloadComments(editor, project, filePath)
+
+        assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+        assertTrue(CommentInlayManager.commentInlayCount(editor) >= 1)
+    }
+
+    fun test_clearAllComments_removes_all_inlays() {
+        myFixture.configureByText("Baz.kt", "line1\nline2\nline3\n")
+        val editor = myFixture.editor
+        CommentInlayManager.releaseEditor(editor)
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "クリアテスト1"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(3, 3), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "クリアテスト2"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        assertTrue(CommentInlayManager.commentInlayCount(editor) >= 2)
+
+        CommentInlayManager.clearAllComments(editor)
+
+        assertEquals(0, CommentInlayManager.commentInlayCount(editor))
+        assertFalse(CommentInlayManager.hasBlockRenderer(editor))
+    }
 }

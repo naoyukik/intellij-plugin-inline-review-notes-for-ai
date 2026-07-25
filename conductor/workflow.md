@@ -8,7 +8,7 @@
 4. **High Code Coverage:** Aim for >80% code coverage for all modules
 5. **User Experience First:** Every decision should prioritize user experience
 6. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use `CI=true` for watch-mode tools (tests, linters) to ensure single execution.
-7. **Track Naming:** トラック名（およびそのディレクトリ名）のプレフィックス番号は、対応するGitHubのIssue番号（チケット番号）に合わせる（例: Issue #3の場合は `003-xxx` とし、3桁のゼロ埋めとする）。
+7. **Track Naming:** The prefix number for the track name (and its directory name) should match the corresponding GitHub issue number (ticket number) (e.g., for Issue #3, use `3-xxx`).
 
 ## Repository Rules
 
@@ -103,8 +103,9 @@ When a track uses phased delivery, keep the phase structure explicit:
 
 - Phase 0 is Discovery & Detailed Design.
 - Phase 0 should include research, plan refinement, environment confirmation, and the manual verification task.
+- After the evidence_report for Phase 0 has been approved by the user, revise and supplement the tasks for Phase 1 and beyond based on the evidence_report as needed.
 - Later phases should contain only the concrete implementation tasks needed for the feature.
-- Each phase closes with `./gradlew test`, the configured static analysis task such as `./gradlew detekt` when available, and manual verification before the phase is marked complete.
+- Each phase closes with `./gradlew test`, the configured static analysis task such as `./gradlew detekt` when available,  and manual verification before committing.
 
 ### Phase Completion Verification and Checkpointing Protocol
 
@@ -138,15 +139,6 @@ When a track uses phased delivery, keep the phase structure explicit:
     -   Stage all changes. If no changes occurred in this step, proceed with an empty commit.
     -   Perform the commit with a clear and concise message (e.g., `conductor(checkpoint): Checkpoint end of Phase X`).
 
-7.  **Get and Record Phase Checkpoint SHA:**
-    -   **Step 8.1: Get Commit Hash:** Obtain the hash of the *just-created checkpoint commit* (`git log -1 --format="%H"`).
-    -   **Step 8.2: Update Plan:** Read `plan.md`, find the heading for the completed phase, and append the first 7 characters of the commit hash in the format `[checkpoint: <sha>]`.
-    -   **Step 8.3: Write Plan:** Write the updated content back to `plan.md`.
-
-8.  **Commit Plan Update:**
-    -   **Action:** Stage the modified `plan.md` file.
-    -   **Action:** Commit this change with a descriptive message following the format `conductor(plan): Mark phase '<PHASE NAME>' as complete`.
-
 ## Quality Gates
 
 Before marking any task complete, verify:
@@ -157,7 +149,6 @@ Before marking any task complete, verify:
 - [ ] All public functions/methods are documented (e.g., docstrings, JSDoc, GoDoc)
 - [ ] Type safety is enforced (e.g., type hints, TypeScript types, Go types)
 - [ ] No linting or static analysis errors (using the project's configured tools)
-- [ ] Works correctly on mobile (if applicable)
 - [ ] Documentation updated if needed
 - [ ] No security vulnerabilities introduced
 
