@@ -103,25 +103,25 @@ class ReviewCommentStorage(
         )
     }
 
-    private fun resolveGitBranch(projectRoot: Path): String? =
-        try {
-            val process = ProcessBuilder("git", "-C", projectRoot.toString(), "rev-parse", "--abbrev-ref", "HEAD")
-                .redirectErrorStream(true)
-                .start()
-
-            process.inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
-                val output = reader.readText().trim()
-                val exitCode = process.waitFor()
-
-                if (exitCode != 0 || output.isBlank() || output == DETACHED_HEAD) {
-                    null
-                } else {
-                    output
-                }
-            }
+    private fun resolveGitBranch(projectRoot: Path): String? {
+        val headFile = projectRoot.resolve(".git").resolve("HEAD")
+        return try {
+            val content = headFile.readText(Charsets.UTF_8).trim()
+            parseBranchFromHead(content)
         } catch (_: Exception) {
             null
         }
+    }
+
+    private fun parseBranchFromHead(headContent: String): String? {
+        if (headContent.isBlank()) return null
+        val refPrefix = "ref: refs/heads/"
+        return if (headContent.startsWith(refPrefix)) {
+            headContent.removePrefix(refPrefix).takeIf { it.isNotBlank() }
+        } else {
+            null
+        }
+    }
 
     companion object {
         private const val STORAGE_DIRECTORY = ".inline-review-notes"

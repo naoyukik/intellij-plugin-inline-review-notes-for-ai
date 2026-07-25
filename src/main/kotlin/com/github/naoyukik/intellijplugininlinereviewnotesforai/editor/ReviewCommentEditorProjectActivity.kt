@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.vcs.BranchChangeListener
 import com.intellij.openapi.vfs.VirtualFileManager
 
 class ReviewCommentEditorProjectActivity : ProjectActivity, DumbAware {
@@ -17,10 +18,10 @@ class ReviewCommentEditorProjectActivity : ProjectActivity, DumbAware {
             }
 
             val fileWatcher = ReviewCommentFileWatcher(project)
-            ApplicationManager.getApplication().messageBus.connect().subscribe(
-                VirtualFileManager.VFS_CHANGES,
-                fileWatcher,
-            )
+            val appBus = ApplicationManager.getApplication().messageBus.connect()
+            appBus.subscribe(VirtualFileManager.VFS_CHANGES, fileWatcher)
+            val projectBus = project.messageBus.connect()
+            projectBus.subscribe(BranchChangeListener.VCS_BRANCH_CHANGED, fileWatcher)
 
             EditorFactory.getInstance().allEditors
                 .asSequence()

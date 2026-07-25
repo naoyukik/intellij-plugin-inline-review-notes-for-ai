@@ -101,4 +101,55 @@ class ReviewCommentStorageTest {
 
         assertEquals(ReviewCommentDocument(), storage.load())
     }
+
+    @Test
+    fun parse_branch_from_head_ref() {
+        val projectRoot = temporaryFolder.root.toPath()
+        val gitDir = projectRoot.resolve(".git")
+        gitDir.toFile().mkdirs()
+        gitDir.resolve("HEAD").writeText("ref: refs/heads/main\n", Charsets.UTF_8)
+
+        val storage = ReviewCommentStorage(projectRoot = projectRoot)
+        assertEquals("main", storage.currentBranchName())
+    }
+
+    @Test
+    fun parse_branch_from_head_feature_branch() {
+        val projectRoot = temporaryFolder.root.toPath()
+        val gitDir = projectRoot.resolve(".git")
+        gitDir.toFile().mkdirs()
+        gitDir.resolve("HEAD").writeText("ref: refs/heads/feature/issue-38\n", Charsets.UTF_8)
+
+        val storage = ReviewCommentStorage(projectRoot = projectRoot)
+        assertEquals("feature/issue-38", storage.currentBranchName())
+    }
+
+    @Test
+    fun parse_branch_from_head_detached() {
+        val projectRoot = temporaryFolder.root.toPath()
+        val gitDir = projectRoot.resolve(".git")
+        gitDir.toFile().mkdirs()
+        gitDir.resolve("HEAD").writeText("abc123def456789\n", Charsets.UTF_8)
+
+        val storage = ReviewCommentStorage(projectRoot = projectRoot)
+        assertEquals("default", storage.currentBranchName())
+    }
+
+    @Test
+    fun parse_branch_from_head_empty() {
+        val projectRoot = temporaryFolder.root.toPath()
+        val gitDir = projectRoot.resolve(".git")
+        gitDir.toFile().mkdirs()
+        gitDir.resolve("HEAD").writeText("", Charsets.UTF_8)
+
+        val storage = ReviewCommentStorage(projectRoot = projectRoot)
+        assertEquals("default", storage.currentBranchName())
+    }
+
+    @Test
+    fun parse_branch_from_head_missing_file() {
+        val projectRoot = temporaryFolder.root.toPath()
+        val storage = ReviewCommentStorage(projectRoot = projectRoot)
+        assertEquals("default", storage.currentBranchName())
+    }
 }

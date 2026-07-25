@@ -43,3 +43,19 @@
 - [~] Task: 手動検証: ブランチを切り替え、新しいブランチのコメントが表示されることを確認
 - [~] Task: 手動検証: 既存のコメント作成・編集・削除機能が正常に動作することを確認
 - [ ] Task: Conductor - ユーザー手動検証 'Phase 2'
+
+## Phase 3 - Optimization: ブランチ切替の高速化
+- [x] Task: `ReviewCommentStorage.resolveGitBranch()` を `.git/HEAD` 直接読み取りに変更
+    - [x] `ProcessBuilder("git", "rev-parse"...)` を削除
+    - [x] `java.nio.file.Path.readText()` で `.git/HEAD` を直接読み込み
+    - [x] `ref: refs/heads/xxx` 形式をパースしてブランチ名を抽出
+    - [x] detached HEAD（ハッシュ値）の場合は `null` を返す
+    - [x] ファイルが存在しない場合は `null` を返す
+- [x] Task: テストを作成
+    - [x] `ReviewCommentStorageTest`: `.git/HEAD` からブランチ名を正しくパースするテスト
+    - [x] `ReviewCommentStorageTest`: detached HEAD の場合のテスト
+    - [x] `ReviewCommentStorageTest`: `.git/HEAD` が存在しない場合のテスト
+- [x] Task: テスト実行と静的解析
+    - [x] `./gradlew test` で全テストを実行
+    - [x] `./gradlew detekt` で静的解析を実行
+- [~] Task: Conductor - ユーザー手動検証 'Phase 3'

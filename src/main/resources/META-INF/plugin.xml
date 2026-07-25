@@ -18,6 +18,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ReviewCommentEditorProjectActivity"/>
+        <notificationGroup id="Inline Review Notes"
+                           displayType="BALLOON"
+                           isLogByDefault="false"/>
     </extensions>
 
     <actions>
