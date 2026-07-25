@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Auto-reload comments when `.inline-review-notes/` files are modified or deleted externally
+- Auto-reload comments on branch switch with balloon notification
+
 ## [0.2.0] - 2026-07-20
 
 ### Changed
