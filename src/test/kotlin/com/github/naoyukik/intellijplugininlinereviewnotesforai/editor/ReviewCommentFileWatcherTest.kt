@@ -1,6 +1,11 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.storage.ReviewCommentStorage
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import java.nio.file.Files
+import java.nio.file.Path
 
 class ReviewCommentFileWatcherTest : BasePlatformTestCase() {
 
@@ -13,7 +18,7 @@ class ReviewCommentFileWatcherTest : BasePlatformTestCase() {
         CommentInlayManager.clearAllComments(myFixture.editor)
     }
 
-    fun test_watcher_clears_on_file_deletion() {
+    fun test_watcher_clears_only_on_current_storage_file_deletion() {
         val editor = myFixture.editor
 
         CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
@@ -23,7 +28,33 @@ class ReviewCommentFileWatcherTest : BasePlatformTestCase() {
         assertTrue(CommentInlayManager.hasBlockRenderer(editor))
 
         val watcher = ReviewCommentFileWatcher(project)
-        watcher.onStorageFileDeleted()
+        val otherBranchFile = myFixture.tempDirFixture.createFile(".inline-review-notes/other.json")
+        watcher.after(mutableListOf(VFileDeleteEvent(null, otherBranchFile, false)))
+
+        assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+
+        val storageFile = ReviewCommentStorage(Path.of(project.basePath!!)).resolveStorageFilePath()
+        val storageVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(storageFile)!!
+        watcher.after(mutableListOf(VFileDeleteEvent(null, storageVirtualFile, false)))
+
+        assertFalse(CommentInlayManager.hasBlockRenderer(editor))
+    }
+
+    fun test_watcher_reloads_on_git_head_change() {
+        val editor = myFixture.editor
+
+        CommentInlayManager.openInputPanel(editor, ReviewCommentLineRange(1, 1), project, filePath)
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "ブランチ変更テスト"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+
+        val watcher = ReviewCommentFileWatcher(project)
+        val headFile = Path.of(project.basePath!!).resolve(".git").resolve("HEAD")
+        Files.createDirectories(headFile.parent)
+        Files.writeString(headFile, "ref: refs/heads/feature/reload-test\n")
+        val headVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(headFile)!!
+        watcher.after(mutableListOf(VFileDeleteEvent(null, headVirtualFile, false)))
 
         assertFalse(CommentInlayManager.hasBlockRenderer(editor))
     }

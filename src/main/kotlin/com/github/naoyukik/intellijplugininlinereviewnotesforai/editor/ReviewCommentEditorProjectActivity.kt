@@ -18,9 +18,9 @@ class ReviewCommentEditorProjectActivity : ProjectActivity, DumbAware {
             }
 
             val fileWatcher = ReviewCommentFileWatcher(project)
-            val appBus = ApplicationManager.getApplication().messageBus.connect()
+            val appBus = ApplicationManager.getApplication().messageBus.connect(project)
             appBus.subscribe(VirtualFileManager.VFS_CHANGES, fileWatcher)
-            val projectBus = project.messageBus.connect()
+            val projectBus = project.messageBus.connect(project)
             projectBus.subscribe(BranchChangeListener.VCS_BRANCH_CHANGED, fileWatcher)
 
             EditorFactory.getInstance().allEditors
