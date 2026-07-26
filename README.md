@@ -20,6 +20,8 @@ Comments are saved to `.inline-review-notes/{branch}.json` on a per-branch basis
 - Inline comment display after input
 - Click existing comments to re-edit or delete
 - Per-branch persistence: `.inline-review-notes/<branch>.json` (file is created automatically using the current branch name)
+- Automatically reload comments when their storage file is changed or deleted
+- Automatically reload comments and show a notification when switching branches
 - Comments with `resolvedAt` are treated as resolved
 
 ## Keyboard Shortcuts
