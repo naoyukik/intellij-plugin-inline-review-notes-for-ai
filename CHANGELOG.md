@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-26
+
 ### Added
 
 - Auto-reload comments when `.inline-review-notes/` files are modified or deleted externally
@@ -28,7 +30,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.0.1...0.1.0
 [0.0.1]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/commits/0.0.1
