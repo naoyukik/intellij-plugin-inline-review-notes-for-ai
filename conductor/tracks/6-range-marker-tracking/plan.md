@@ -14,19 +14,19 @@
 
 ## Phase 1: 追跡状態モデルと RangeMarkerManager
 
-- [ ] Task: `isOutdated` のシリアライズ要件を Red/Green で実装する
-  - [ ] `model/ReviewCommentSerializationTest.kt` に、`isOutdated = true` の往復変換とフィールド欠落時の `false` を検証する失敗テストを追加する
-  - [ ] `model/ReviewComment.kt` に既定値 `false` の `isOutdated` を追加し、既存の `ReviewCommentDocument` JSON を後方互換で読み込めるようにしてテストを成功させる
-- [ ] Task: `RangeMarkerManager` の追跡機能を Red/Green で実装する
-  - [ ] `editor/RangeMarkerManagerTest.kt` に、コメント ID ごとの登録、同一 ID の置換、破棄、無効マーカー検出を検証する失敗テストを追加する
-  - [ ] 同テストに、単一行・複数行範囲の前後への行挿入・削除と、範囲全削除後に直近の行範囲を維持するケースを追加する
-  - [ ] `editor/RangeMarkerManager.kt` に、行番号から開始オフセット・終了行末尾オフセットへの変換、マーカーの置換・破棄、有効性を含む現在位置の解決を最小限で実装する
-  - [ ] `RangeMarkerManagerTest` と既存の `CommentInlayManagerTest`、`ReviewCommentSerializationTest` を成功させる
-- [ ] Task: 静的解析とカバレッジを確認する
-  - [ ] 関連テストと `./gradlew detekt` を実行する
-  - [ ] 追加コードのカバレッジが 80% 以上となることを確認する
-- [ ] Task: Conductor - ユーザー手動検証「追跡状態モデルと RangeMarkerManager」(workflow.md の手順に従う)
-- [ ] Task: Conductor - 「追跡状態モデルと RangeMarkerManager」の成果をコミット
+- [x] Task: `isOutdated` のシリアライズ要件を Red/Green で実装する (cd67695)
+  - [x] `model/ReviewCommentSerializationTest.kt` に、`isOutdated = true` の往復変換とフィールド欠落時の `false` を検証する失敗テストを追加する
+  - [x] `model/ReviewComment.kt` に既定値 `false` の `isOutdated` を追加し、既存の `ReviewCommentDocument` JSON を後方互換で読み込めるようにしてテストを成功させる
+- [x] Task: `RangeMarkerManager` の追跡機能を Red/Green で実装する (cd67695)
+  - [x] `editor/RangeMarkerManagerTest.kt` に、コメント ID ごとの登録、同一 ID の置換、破棄、無効マーカー検出を検証する失敗テストを追加する
+  - [x] 同テストに、単一行・複数行範囲の前後への行挿入・削除と、範囲全削除後に直近の行範囲を維持するケースを追加する
+  - [x] `editor/RangeMarkerManager.kt` に、行番号から開始オフセット・終了行末尾オフセットへの変換、マーカーの置換・破棄、有効性を含む現在位置の解決を最小限で実装する
+  - [x] `RangeMarkerManagerTest` と既存の `CommentInlayManagerTest`、`ReviewCommentSerializationTest` を成功させる
+- [x] Task: 静的解析とカバレッジを確認する (cd67695)
+  - [x] 関連テストと `./gradlew detekt` を実行する
+  - [x] 追加コードのカバレッジが 80% 以上となることを確認する
+- [x] Task: Conductor - ユーザー手動検証「追跡状態モデルと RangeMarkerManager」(workflow.md の手順に従う)
+- [x] Task: Conductor - 「追跡状態モデルと RangeMarkerManager」の成果をコミット (cd67695)
 
 ## Phase 2: Inlay 表示と保存通知の接続
 
