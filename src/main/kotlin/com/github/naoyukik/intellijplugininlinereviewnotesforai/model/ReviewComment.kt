@@ -11,4 +11,5 @@ data class ReviewComment(
     val comment: String,
     val createdAt: String,
     val resolvedAt: String? = null,
+    val isOutdated: Boolean = false,
 )

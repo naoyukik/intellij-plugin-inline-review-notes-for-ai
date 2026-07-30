@@ -1,0 +1,14 @@
+{
+    "version": "1.0",
+    "comments": [
+        {
+            "id": "e25535db-e592-4e3c-a812-ddd4b2eb6c37",
+            "filePath": "src/main/kotlin/com/github/naoyukik/intellijplugininlinereviewnotesforai/editor/RangeMarkerManager.kt",
+            "lineStart": 35,
+            "lineEnd": 35,
+            "comment": "imo: detektの指摘が入ってる。エラーにならないが。",
+            "createdAt": "2026-07-30T19:47:07.879383700+09:00",
+            "resolvedAt": "2026-07-30T19:47:07.879383700+09:00"
+        }
+    ]
+}
