@@ -1,7 +1,9 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.storage.ReviewCommentStorage
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.RangeMarker
+import java.nio.file.Path
 
 class RangeMarkerManager {
 
@@ -42,5 +44,24 @@ class RangeMarkerManager {
         } else {
             null
         }
+    }
+
+    fun isTracked(commentId: String): Boolean = markers.containsKey(commentId)
+
+    fun syncOnSave(@Suppress("UNUSED_PARAMETER") document: Document, projectRoot: Path, filePath: String) {
+        val storage = ReviewCommentStorage(projectRoot)
+        val doc = storage.load()
+        val updatedComments = doc.comments.map { comment ->
+            if (comment.filePath != filePath) return@map comment
+            val resolved = resolveLineRange(comment.id)
+            if (resolved != null) {
+                comment.copy(lineStart = resolved.lineStart, lineEnd = resolved.lineEnd, isOutdated = false)
+            } else if (isTracked(comment.id)) {
+                comment.copy(isOutdated = true)
+            } else {
+                comment
+            }
+        }
+        storage.save(doc.copy(comments = updatedComments))
     }
 }

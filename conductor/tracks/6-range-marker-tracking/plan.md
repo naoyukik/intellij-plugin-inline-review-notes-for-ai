@@ -30,21 +30,22 @@
 
 ## Phase 2: Inlay 表示と保存通知の接続
 
-- [ ] Task: コメントのライフサイクルを追跡管理へ接続する
-  - [ ] `editor/CommentInlayManagerStorageTest.kt` に、`restoreComments` が解決済みを含む全コメントを登録し、未解決コメントだけを表示する失敗テストを追加する
-  - [ ] 同テストに、新規作成・編集での置換、削除・再読込・エディタ解放での破棄を検証する失敗テストを追加する
-  - [ ] `editor/CommentInlayManager.kt` を更新し、コメント操作に対応する `RangeMarkerManager` の登録・置換・破棄だけを委譲してテストを成功させる
-- [ ] Task: 保存時の JSON 同期を Red/Green で実装する
-  - [ ] `editor/CommentInlayManagerStorageTest.kt` に、保存対象 `Document` のマーカーが同期される失敗テストを追加する
-  - [ ] 同テストに、有効マーカーは再計算した行範囲、無効マーカーは既存行範囲と `isOutdated = true` を保存するケースを追加する
-  - [ ] `editor/ReviewCommentEditorProjectActivity.kt` のプロジェクト寿命の Message Bus 接続で `AppTopics.FILE_DOCUMENT_SYNC` を購読し、保存対象だけを `RangeMarkerManager` に渡す
-  - [ ] `editor/RangeMarkerManager.kt` から `storage/ReviewCommentStorage.kt` の既存 `load()` / `save()` を用い、同一ファイルの全コメントを ID 単位で更新する
-  - [ ] 追加テスト、既存の `CommentInlayManagerTest`、`CommentInlayManagerStorageTest`、`RangeMarkerManagerTest` を成功させる
-- [ ] Task: 静的解析とカバレッジを確認する
-  - [ ] 関連テストと `./gradlew detekt` を実行する
-  - [ ] 追加コードのカバレッジが 80% 以上となることを確認する
-- [ ] Task: Conductor - ユーザー手動検証「Inlay 表示と保存通知の接続」(workflow.md の手順に従う)
-- [ ] Task: Conductor - 「Inlay 表示と保存通知の接続」の成果をコミット
+- [x] Task: コメントのライフサイクルを追跡管理へ接続する
+  - [x] `editor/CommentInlayManagerStorageTest.kt` に、`restoreComments` が解決済みを含む全コメントを登録し、未解決コメントだけを表示するテストを追加する (このコミット)
+  - [x] 同テストに、新規作成・編集での置換、削除・再読込・エディタ解放での破棄を検証するテストを追加する (このコミット)
+  - [x] `editor/CommentInlayManager.kt` を更新し、コメント操作に対応する `RangeMarkerManager` の登録・置換・破棄だけを委譲してテストを成功させる (このコミット)
+- [x] Task: 保存時の JSON 同期を Red/Green で実装する
+  - [x] `editor/CommentInlayManagerStorageTest.kt` に、保存対象 `Document` のマーカーが同期されるテストを追加する (このコミット)
+  - [x] 同テストに、有効マーカーは再計算した行範囲、無効マーカーは既存行範囲と `isOutdated = true` を保存するケースを追加する (このコミット)
+  - [x] `editor/ReviewCommentEditorProjectActivity.kt` のプロジェクト寿命の Message Bus 接続で `FileDocumentManagerListener.TOPIC` を購読し、保存対象だけを `RangeMarkerManager` に渡す (このコミット)
+  - [x] `editor/RangeMarkerManager.kt` に `syncOnSave()` を追加し、`storage/ReviewCommentStorage.kt` の既存 `load()` / `save()` を用いて、同一ファイルの全コメントを ID 単位で更新する (このコミット)
+  - [x] 追加テスト、既存の `CommentInlayManagerTest`、`CommentInlayManagerStorageTest`、`RangeMarkerManagerTest` を成功させる (このコミット)
+- [x] Task: 静的解析とカバレッジを確認する
+  - [x] 関連テスト (`./gradlew test`) と `./gradlew detekt` を実行する
+  - [x] 追加コードのカバレッジが 80% 以上となることを確認する
+- [x] Task: Conductor - ユーザー手動検証「Inlay 表示と保存通知の接続」
+  - [x] IDE でコメント追加・編集・保存・編集後の行位置追跡を確認し、ユーザーの明示的な承認を得る
+- [x] Task: Conductor - 「Inlay 表示と保存通知の接続」の成果をコミット (このコミット)
 
 ## Phase 3: 保存同期の統合検証と品質ゲート
 
