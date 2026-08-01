@@ -257,6 +257,167 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         assertNull(rangeMarkerManager.resolveLineRange(commentId))
     }
 
+    fun test_syncOnSave_single_line_after_lines_inserted_before() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(2, 2),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "insert before"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(0, "new line A\nnew line B\n")
+        }
+
+        rangeMarkerManager.syncOnSave(document, projectRoot, "src/Foo.kt")
+
+        val saved = storage.load().comments.first()
+        assertEquals(4, saved.lineStart)
+        assertEquals(4, saved.lineEnd)
+        assertFalse(saved.isOutdated)
+    }
+
+    fun test_syncOnSave_multi_line_after_lines_inserted_in_middle() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(2, 3),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "multi range"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(document.getLineEndOffset(1) + 1, "inserted A\ninserted B\n")
+        }
+
+        rangeMarkerManager.syncOnSave(document, projectRoot, "src/Foo.kt")
+
+        val saved = storage.load().comments.first()
+        assertEquals(2, saved.lineStart)
+        assertEquals(5, saved.lineEnd)
+        assertFalse(saved.isOutdated)
+    }
+
+    fun test_syncOnSave_multiple_comments_all_updated() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(1, 1),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "first"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(3, 3),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "second"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(0, "new line\n")
+        }
+
+        rangeMarkerManager.syncOnSave(document, projectRoot, "src/Foo.kt")
+
+        val comments = storage.load().comments.sortedBy { it.lineStart }
+        assertEquals(2, comments.size)
+        assertEquals(2, comments[0].lineStart)
+        assertEquals(2, comments[0].lineEnd)
+        assertEquals(4, comments[1].lineStart)
+        assertEquals(4, comments[1].lineEnd)
+        assertFalse(comments[0].isOutdated)
+        assertFalse(comments[1].isOutdated)
+    }
+
+    fun test_syncOnSave_mixed_resolved_unresolved() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(2, 2),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "unresolved"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        val resolvedComment = ReviewComment(
+            id = UUID.randomUUID().toString(),
+            filePath = "src/Foo.kt",
+            lineStart = 1,
+            lineEnd = 1,
+            comment = "resolved",
+            createdAt = OffsetDateTime.now().toString(),
+            resolvedAt = OffsetDateTime.now().toString(),
+        )
+        val existingDoc = storage.load()
+        storage.save(existingDoc.copy(comments = existingDoc.comments + resolvedComment))
+        rangeMarkerManager.register(resolvedComment.id, document, ReviewCommentLineRange(1, 1))
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(0, "new line\n")
+        }
+
+        rangeMarkerManager.syncOnSave(document, projectRoot, "src/Foo.kt")
+
+        val comments = storage.load().comments
+        assertEquals(2, comments.size)
+        comments.forEach { assertFalse(it.isOutdated) }
+    }
+
+    fun test_syncOnSave_multi_line_preserves_last_known_on_full_delete() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(2, 4),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "multi delete"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.deleteString(0, document.textLength)
+        }
+
+        rangeMarkerManager.syncOnSave(document, projectRoot, "src/Foo.kt")
+
+        val saved = storage.load().comments.first()
+        assertTrue(saved.isOutdated)
+        assertEquals(2, saved.lineStart)
+        assertEquals(4, saved.lineEnd)
+    }
+
     fun test_save_with_existing_comment_updates_storage() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile
