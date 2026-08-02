@@ -27,8 +27,8 @@ class ReviewCommentEditorProjectActivity : ProjectActivity, DumbAware {
             val projectBus = project.messageBus.connect(project)
             projectBus.subscribe(BranchChangeListener.VCS_BRANCH_CHANGED, fileWatcher)
 
-            val rangeMarkerManager = RangeMarkerManager()
-            CommentInlayManager.rangeMarkerManager = rangeMarkerManager
+            val rangeMarkerManager = project.getService(RangeMarkerManager::class.java)
+                ?: RangeMarkerManager().also { CommentInlayManager.registerRangeMarkerManager(project, it) }
             appBus.subscribe(
                 FileDocumentManagerListener.TOPIC,
                 object : FileDocumentManagerListener {

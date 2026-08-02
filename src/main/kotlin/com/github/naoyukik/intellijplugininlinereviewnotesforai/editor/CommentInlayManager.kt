@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 import com.intellij.ui.awt.RelativePoint
 import java.nio.file.Path
 import java.time.OffsetDateTime
@@ -26,9 +27,14 @@ import java.util.UUID
 @Suppress("TooManyFunctions")
 object CommentInlayManager {
 
-    var rangeMarkerManager: RangeMarkerManager? = null
-
+    private val rangeMarkerManagerKey = Key.create<RangeMarkerManager>(
+        "com.github.naoyukik.intellijplugininlinereviewnotesforai.rangeMarkerManager",
+    )
     private val editorStates = IdentityHashMap<Editor, EditorState>()
+
+    fun registerRangeMarkerManager(project: Project, manager: RangeMarkerManager) {
+        project.putUserData(rangeMarkerManagerKey, manager)
+    }
 
     fun openInputPanel(
         editor: Editor,
@@ -77,7 +83,10 @@ object CommentInlayManager {
         editorStates.remove(editor)?.let { state ->
             state.commentInlays.values.forEach { Disposer.dispose(it) }
             state.disposeInputInlay()
-            state.commentIds.forEach { rangeMarkerManager?.dispose(it) }
+            state.project?.let { project ->
+                val markerManager = markerManager(project)
+                state.commentIds.forEach { markerManager?.dispose(it, editor.document) }
+            }
         }
     }
 
@@ -87,7 +96,10 @@ object CommentInlayManager {
             state.commentInlays.values.forEach { Disposer.dispose(it) }
             state.commentInlays.clear()
             state.commentRenderers.clear()
-            state.commentIds.forEach { rangeMarkerManager?.dispose(it) }
+            state.project?.let { project ->
+                val markerManager = markerManager(project)
+                state.commentIds.forEach { markerManager?.dispose(it, editor.document) }
+            }
             state.commentIds.clear()
             state.filePath = null
         }
@@ -99,11 +111,14 @@ object CommentInlayManager {
         state.commentInlays.values.forEach { Disposer.dispose(it) }
         state.commentInlays.clear()
         state.commentRenderers.clear()
-        state.commentIds.forEach { rangeMarkerManager?.dispose(it) }
+        state.project?.let { project ->
+            val markerManager = markerManager(project)
+            state.commentIds.forEach { markerManager?.dispose(it, editor.document) }
+        }
         state.commentIds.clear()
     }
 
-    @Suppress("LoopWithTooManyJumpStatements")
+    @Suppress("CyclomaticComplexMethod", "LoopWithTooManyJumpStatements")
     fun restoreComments(editor: Editor, project: Project, filePath: String) {
         val state = editorStates.getOrPut(editor) { EditorState() }
         state.project = project
@@ -114,7 +129,8 @@ object CommentInlayManager {
             state.commentInlays.values.forEach { Disposer.dispose(it) }
             state.commentInlays.clear()
             state.commentRenderers.clear()
-            state.commentIds.forEach { rangeMarkerManager?.dispose(it) }
+            val markerManager = markerManager(project)
+            state.commentIds.forEach { markerManager?.dispose(it, editor.document) }
             state.commentIds.clear()
         }
 
@@ -126,18 +142,21 @@ object CommentInlayManager {
 
         val relativePath = resolveRelativePath(editor, project)
         val fileComments = document.comments.filter { it.filePath == relativePath }
+        val markerManager = markerManager(project)
         for (comment in fileComments) {
             val lineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
-            rangeMarkerManager?.register(comment.id, editor.document, lineRange)
-            state.commentIds.add(comment.id)
+            if (state.commentIds.add(comment.id)) {
+                markerManager?.register(comment.id, editor.document, lineRange)
+            }
             if (comment.resolvedAt == null) {
                 val renderer = CommentBlockRenderer(
                     text = comment.comment,
                     onClick = {
                         editorStates[editor]?.let { s ->
+                            val currentLineRange = currentLineRange(editor, comment.id, lineRange)
                             openInputPanel(
                                 editor,
-                                lineRange,
+                                currentLineRange,
                                 s.project!!,
                                 s.filePath!!,
                                 comment.comment,
@@ -146,7 +165,8 @@ object CommentInlayManager {
                         }
                     },
                 )
-                val inlay = addBlockInlay(editor, lineRange, renderer) ?: continue
+                val currentLineRange = currentLineRange(editor, comment.id, lineRange)
+                val inlay = addBlockInlay(editor, currentLineRange, renderer) ?: continue
                 state.commentInlays[comment.id] = inlay
                 state.commentRenderers[comment.id] = renderer
             }
@@ -156,14 +176,17 @@ object CommentInlayManager {
     @Suppress("ReturnCount")
     private fun saveComment(editor: Editor, text: String) {
         val state = editorStates[editor] ?: return
-        val lineRange = state.currentEditLineRange ?: return
+        val fallbackLineRange = state.currentEditLineRange ?: return
         val project = state.project ?: return
+        val editCommentId = state.currentEditCommentId
+        val lineRange = editCommentId?.let {
+            currentLineRange(editor, it, fallbackLineRange)
+        } ?: fallbackLineRange
 
         val projectRoot = project.basePath?.let { Path.of(it) } ?: return
         val storage = ReviewCommentStorage(projectRoot)
         val document = storage.load()
 
-        val editCommentId = state.currentEditCommentId
         val commentId: String
         val filteredComments: List<ReviewComment>
 
@@ -191,7 +214,7 @@ object CommentInlayManager {
         state.currentEditCommentId = null
         state.currentEditLineRange = null
 
-        rangeMarkerManager?.replace(commentId, editor.document, lineRange)
+        markerManager(project)?.replace(commentId, editor.document, lineRange)
         if (!state.commentIds.contains(commentId)) {
             state.commentIds.add(commentId)
         }
@@ -200,7 +223,8 @@ object CommentInlayManager {
             text = text,
             onClick = {
                 editorStates[editor]?.let { s ->
-                    openInputPanel(editor, lineRange, s.project!!, s.filePath!!, text, commentId)
+                    val currentLineRange = currentLineRange(editor, commentId, lineRange)
+                    openInputPanel(editor, currentLineRange, s.project!!, s.filePath!!, text, commentId)
                 }
             },
         )
@@ -216,20 +240,21 @@ object CommentInlayManager {
 
         if (editCommentId != null) {
             val project = state.project ?: return
-            val filePath = state.filePath ?: return
             val projectRoot = project.basePath?.let { Path.of(it) } ?: return
             val storage = ReviewCommentStorage(projectRoot)
             val document = storage.load()
             val comment = document.comments.find { it.id == editCommentId }
             if (comment != null) {
-                val restoreLineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
+                val storedLineRange = ReviewCommentLineRange(comment.lineStart, comment.lineEnd)
+                val restoreLineRange = currentLineRange(editor, comment.id, storedLineRange)
                 val renderer = CommentBlockRenderer(
                     text = comment.comment,
                     onClick = {
                         editorStates[editor]?.let { s ->
+                            val currentLineRange = currentLineRange(editor, comment.id, restoreLineRange)
                             openInputPanel(
                                 editor,
-                                restoreLineRange,
+                                currentLineRange,
                                 s.project!!,
                                 s.filePath!!,
                                 comment.comment,
@@ -265,7 +290,7 @@ object CommentInlayManager {
         state.disposeInputInlay()
         if (commentId != null) {
             state.disposeCommentInlay(commentId)
-            rangeMarkerManager?.dispose(commentId)
+            project?.let { markerManager(it)?.dispose(commentId) }
             state.commentIds.remove(commentId)
         }
         state.currentEditCommentId = null
@@ -289,6 +314,21 @@ object CommentInlayManager {
         )
         installInlayClickListener(editor)
         return inlay
+    }
+
+    private fun markerManager(project: Project): RangeMarkerManager? =
+        project.getService(RangeMarkerManager::class.java)
+            ?: project.getUserData(rangeMarkerManagerKey)
+
+    @Suppress("ReturnCount")
+    private fun currentLineRange(
+        editor: Editor,
+        commentId: String,
+        fallback: ReviewCommentLineRange,
+    ): ReviewCommentLineRange {
+        val project = editorStates[editor]?.project ?: return fallback
+        val resolved = markerManager(project)?.resolveLineRange(commentId, editor.document) ?: return fallback
+        return ReviewCommentLineRange(resolved.lineStart, resolved.lineEnd)
     }
 
     private fun installInlayClickListener(editor: Editor) {

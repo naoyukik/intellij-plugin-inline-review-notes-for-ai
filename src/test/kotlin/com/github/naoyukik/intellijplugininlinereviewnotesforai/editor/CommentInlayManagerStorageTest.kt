@@ -14,12 +14,14 @@ import java.util.UUID
 class CommentInlayManagerStorageTest : BasePlatformTestCase() {
 
     private lateinit var projectRoot: Path
-    private val rangeMarkerManager = RangeMarkerManager()
+    private lateinit var rangeMarkerManager: RangeMarkerManager
 
     override fun setUp() {
         super.setUp()
         myFixture.configureByText("Foo.kt", "first line\nsecond line\nthird line\n")
         projectRoot = Path.of(project.basePath!!)
+        rangeMarkerManager = RangeMarkerManager()
+        CommentInlayManager.registerRangeMarkerManager(project, rangeMarkerManager)
         val storageDir = projectRoot.resolve(".inline-review-notes")
         if (storageDir.toFile().exists()) {
             storageDir.toFile().deleteRecursively()
@@ -31,7 +33,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -53,12 +54,42 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         assertFalse(saved.isOutdated)
     }
 
+    fun test_edit_after_document_change_preserves_tracked_line_range() {
+        val editor = myFixture.editor
+        val document = editor.document
+        val storage = ReviewCommentStorage(projectRoot)
+
+        CommentInlayManager.openInputPanel(
+            editor,
+            ReviewCommentLineRange(2, 2),
+            project,
+            myFixture.file.virtualFile.path,
+        )
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "before edit"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(0, "new line\n")
+        }
+
+        val blockRenderer = CommentInlayManager.activeBlockRenderer(editor)
+        assertNotNull(blockRenderer)
+        assertTrue(blockRenderer is CommentBlockRenderer)
+        (blockRenderer as CommentBlockRenderer).onClick()
+        CommentInlayManager.activeInputPanel(editor)?.textArea?.text = "after edit"
+        CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
+
+        val saved = storage.load().comments.first()
+        assertEquals(3, saved.lineStart)
+        assertEquals(3, saved.lineEnd)
+        assertEquals("after edit", saved.comment)
+    }
+
     fun test_syncOnSave_marks_isOutdated_when_range_deleted() {
         val editor = myFixture.editor
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -160,7 +191,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         )
         storage.save(ReviewCommentDocument(comments = listOf(resolvedComment, unresolvedComment)))
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.restoreComments(editor, project, file.path)
 
         assertNotNull(rangeMarkerManager.resolveLineRange(resolvedComment.id))
@@ -172,7 +202,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -191,7 +220,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -215,7 +243,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -238,7 +265,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -262,7 +288,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -289,7 +314,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 3),
@@ -315,8 +339,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val editor = myFixture.editor
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
-
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
 
         CommentInlayManager.openInputPanel(
             editor,
@@ -357,7 +379,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 2),
@@ -396,7 +417,6 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         val document = editor.document
         val storage = ReviewCommentStorage(projectRoot)
 
-        CommentInlayManager.rangeMarkerManager = rangeMarkerManager
         CommentInlayManager.openInputPanel(
             editor,
             ReviewCommentLineRange(2, 4),

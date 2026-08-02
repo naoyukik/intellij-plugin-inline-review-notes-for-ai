@@ -1,6 +1,7 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class RangeMarkerManagerTest : BasePlatformTestCase() {
@@ -132,5 +133,31 @@ class RangeMarkerManagerTest : BasePlatformTestCase() {
         val marker2 = manager.resolveLineRange("id-1")
         assertNotNull(marker2)
         assertEquals(2, marker2!!.lineStart)
+    }
+
+    fun test_shared_document_marker_survives_one_registration_disposal() {
+        myFixture.configureByText("test.kt", "line1\nline2\nline3\n")
+        val document = myFixture.editor.document
+
+        manager.register("id-1", document, ReviewCommentLineRange(1, 1))
+        manager.register("id-1", document, ReviewCommentLineRange(1, 1))
+        manager.dispose("id-1", document)
+
+        assertNotNull(manager.resolveLineRange("id-1", document))
+    }
+
+    fun test_same_comment_id_is_scoped_to_document() {
+        val firstDocument = DocumentImpl("first\nsecond\n")
+        val secondDocument = DocumentImpl("first\nsecond\n")
+
+        manager.register("id-1", firstDocument, ReviewCommentLineRange(1, 1))
+        manager.register("id-1", secondDocument, ReviewCommentLineRange(2, 2))
+
+        assertEquals(1, manager.resolveLineRange("id-1", firstDocument)!!.lineStart)
+        assertEquals(2, manager.resolveLineRange("id-1", secondDocument)!!.lineStart)
+
+        manager.dispose("id-1", firstDocument)
+
+        assertNotNull(manager.resolveLineRange("id-1", secondDocument))
     }
 }
