@@ -198,6 +198,37 @@ class CommentInlayManagerStorageTest : BasePlatformTestCase() {
         assertEquals(1, CommentInlayManager.commentInlayCount(editor))
     }
 
+    fun test_inlay_follows_comment_line_when_newline_is_inserted_at_line_start() {
+        myFixture.configureByText(
+            "Foo.kt",
+            "line1\nline2\nline3\nline4\nline5\nline6\nline7\n",
+        )
+        val editor = myFixture.editor
+        val document = editor.document
+        val file = myFixture.file.virtualFile
+        val storage = ReviewCommentStorage(projectRoot)
+        val comment = ReviewComment(
+            id = UUID.randomUUID().toString(),
+            filePath = "src/Foo.kt",
+            lineStart = 6,
+            lineEnd = 6,
+            comment = "follows line",
+            createdAt = OffsetDateTime.now().toString(),
+        )
+        storage.save(ReviewCommentDocument(comments = listOf(comment)))
+
+        CommentInlayManager.restoreComments(editor, project, file.path)
+
+        val inlay = editor.inlayModel.getBlockElementsInRange(0, document.textLength).single()
+        assertEquals(document.getLineStartOffset(5), inlay.offset)
+
+        com.intellij.openapi.command.WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(document.getLineStartOffset(5), "\n")
+        }
+
+        assertEquals(document.getLineStartOffset(6), inlay.offset)
+    }
+
     fun test_save_comment_replaces_marker_in_rangeMarkerManager() {
         val editor = myFixture.editor
         val file = myFixture.file.virtualFile

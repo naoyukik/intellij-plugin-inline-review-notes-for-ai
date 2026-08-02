@@ -307,7 +307,7 @@ object CommentInlayManager {
         )
         val inlay = editor.inlayModel.addBlockElement(
             offset,
-            false,
+            true,
             false,
             0,
             renderer,

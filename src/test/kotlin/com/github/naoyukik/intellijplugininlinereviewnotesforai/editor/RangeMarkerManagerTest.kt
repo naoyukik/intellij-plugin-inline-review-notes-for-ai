@@ -92,6 +92,36 @@ class RangeMarkerManagerTest : BasePlatformTestCase() {
         assertEquals(6, resolved.lineEnd)
     }
 
+    fun test_tracks_comment_when_newline_is_inserted_at_comment_line_start() {
+        myFixture.configureByText("test.kt", "line1\nline2\nline3\nline4\nline5\nline6\nline7\n")
+        val document = myFixture.editor.document
+
+        manager.register("id-1", document, ReviewCommentLineRange(6, 6))
+        WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(document.getLineStartOffset(5), "\n")
+        }
+
+        val resolved = manager.resolveLineRange("id-1")
+        assertNotNull(resolved)
+        assertEquals(7, resolved!!.lineStart)
+        assertEquals(7, resolved.lineEnd)
+    }
+
+    fun test_tracks_comment_when_newline_is_inserted_at_comment_line_end() {
+        myFixture.configureByText("test.kt", "line1\nline2\nline3\nline4\nline5\nline6\nline7\n")
+        val document = myFixture.editor.document
+
+        manager.register("id-1", document, ReviewCommentLineRange(6, 6))
+        WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            document.insertString(document.getLineEndOffset(5), "\n")
+        }
+
+        val resolved = manager.resolveLineRange("id-1")
+        assertNotNull(resolved)
+        assertEquals(6, resolved!!.lineStart)
+        assertEquals(6, resolved.lineEnd)
+    }
+
     fun test_returns_null_when_entire_range_deleted() {
         myFixture.configureByText("test.kt", "line1\nline2\nline3\nline4\nline5\n")
         val document = myFixture.editor.document

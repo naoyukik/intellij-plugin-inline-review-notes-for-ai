@@ -77,9 +77,19 @@ class RangeMarkerManager : Disposable {
 
     private fun resolveLineRange(marker: RangeMarker): ResolvedLineRange? {
         return if (marker.isValid) {
+            val endOffset = marker.endOffset
+            val lineEndOffset = if (
+                endOffset > marker.startOffset &&
+                endOffset < marker.document.textLength &&
+                marker.document.getLineStartOffset(marker.document.getLineNumber(endOffset)) == endOffset
+            ) {
+                endOffset - 1
+            } else {
+                endOffset
+            }
             ResolvedLineRange(
                 lineStart = marker.document.getLineNumber(marker.startOffset) + 1,
-                lineEnd = marker.document.getLineNumber(marker.endOffset) + 1,
+                lineEnd = marker.document.getLineNumber(lineEndOffset) + 1,
             )
         } else {
             null
