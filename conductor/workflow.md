@@ -36,6 +36,10 @@
 - Even if the implementation looks correct, treat it as incomplete until the behavior has been verified.
 - Do not prioritize efficiency over the prescribed process.
 
+### Code Exploration Tools
+
+IMPORTANT: When applicable, prefer using JetBrains MCP and intellij-index MCP tools for code navigation and refactoring.
+
 ### References
 
 - Kotlin Reference: https://kotlinlang.org/docs/

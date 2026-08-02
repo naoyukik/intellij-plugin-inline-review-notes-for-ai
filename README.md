@@ -22,6 +22,7 @@ Comments are saved to `.inline-review-notes/{branch}.json` on a per-branch basis
 - Per-branch persistence: `.inline-review-notes/<branch>.json` (file is created automatically using the current branch name)
 - Automatically reload comments when their storage file is changed or deleted
 - Automatically reload comments and show a notification when switching branches
+- Track comment line positions when lines are inserted or deleted in the IntelliJ editor, and synchronize the updated line numbers to JSON on save
 - Comments with `resolvedAt` are treated as resolved
 
 ## Keyboard Shortcuts
@@ -54,6 +55,10 @@ Comments are stored in `.inline-review-notes/<branch>.json`.
 - `filePath` is relative to the project root
 - Resolution status is expressed by the presence or absence of `resolvedAt`
 - The `.inline-review-notes/` directory is excluded from version control (`.gitignore` recommended)
+
+## Limitations
+
+- Line tracking applies to edits made in the IntelliJ editor. Changes to source files made externally, such as by another application or a Git operation, are not supported for line tracking.
 
 ## Recommended: AI Agent Skills
 
