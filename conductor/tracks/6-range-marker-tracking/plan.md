@@ -65,3 +65,7 @@
 ## Phase: Review Fixes
 
 - [x] Task: Apply review suggestions ff96eb0
+
+## Phase: Follow-up Fixes
+
+- [x] Task: Fix line-end newline tracking 7257525
