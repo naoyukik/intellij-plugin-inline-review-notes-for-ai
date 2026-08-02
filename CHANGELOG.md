@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Track comment line positions when lines are inserted or deleted in the IntelliJ editor, and synchronize updated line numbers to JSON on save
+  - Limitation: Line tracking does not support source file changes made outside the IntelliJ editor, such as by another application or a Git operation
+
 ## [0.3.0] - 2026-07-26
 
 ### Added
