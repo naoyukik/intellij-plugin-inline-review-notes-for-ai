@@ -7,10 +7,10 @@
 
 ## Phase 0: Discovery & Detailed Design
 
-- [ ] Task: Issue 56 の現状と実行環境を確認する
-  - [ ] `ReviewCommentEditorTracker.kt` の `refresh`、`CommentInlayManager.kt` の入力位置・インレイ位置計算、`ReviewCommentEditorLineRangeResolver.kt`、関連テストを読み、現在の処理経路を確定する
-  - [ ] 空の `Document`、JSON 不在、非空ファイルのそれぞれについて再現条件と期待結果を整理する
-  - [ ] `.\gradlew.bat tasks --all` の結果から `test`、`detekt`、`build` の利用可否を確認する
+- [x] Task: Issue 56 の現状と実行環境を確認する
+  - [x] `ReviewCommentEditorTracker.kt` の `refresh`、`CommentInlayManager.kt` の入力位置・インレイ位置計算、`ReviewCommentEditorLineRangeResolver.kt`、関連テストを読み、現在の処理経路を確定する
+  - [x] 空の `Document`、JSON 不在、非空ファイルのそれぞれについて再現条件と期待結果を整理する
+  - [x] `.\gradlew.bat tasks --all` の結果から `test`、`detekt`、`build` の利用可否を確認する
 
 - [ ] Task: IntelliJ Platform の空ドキュメント位置 API を調査する
   - [ ] `lineCount == 0` のときに `getLineStartOffset`、`addLineHighlighter`、`addBlockElement`、ポップアップ位置計算へ渡せる安全なインデックス・オフセットを確認する
