@@ -11,6 +11,16 @@ import java.util.UUID
 
 class ReviewCommentEditorFileListenerTest : BasePlatformTestCase() {
 
+    fun test_emptyFile_trackingWithoutJson_preparesGutterIcon() {
+        myFixture.configureByText("Empty.kt", "")
+        val editor = myFixture.editor
+
+        ReviewCommentEditorTracker.release(editor)
+        ReviewCommentEditorTracker.track(editor)
+
+        assertTrue(editor.markupModel.allHighlighters.any { it.gutterIconRenderer != null })
+    }
+
     fun test_fileOpened_restores_unresolved_comments() {
         myFixture.configureByText("Foo.kt", "line1\nline2\n")
         val editor = myFixture.editor
