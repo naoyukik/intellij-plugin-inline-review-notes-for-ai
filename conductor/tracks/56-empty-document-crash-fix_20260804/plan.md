@@ -12,10 +12,10 @@
   - [x] 空の `Document`、JSON 不在、非空ファイルのそれぞれについて再現条件と期待結果を整理する
   - [x] `.\gradlew.bat tasks --all` の結果から `test`、`detekt`、`build` の利用可否を確認する
 
-- [ ] Task: IntelliJ Platform の空ドキュメント位置 API を調査する
-  - [ ] `lineCount == 0` のときに `getLineStartOffset`、`addLineHighlighter`、`addBlockElement`、ポップアップ位置計算へ渡せる安全なインデックス・オフセットを確認する
-  - [ ] 論理 `ReviewCommentLineRange(1, 1)` を維持しながら、空範囲 `0..-1` を生成しない正規化方法を比較する
-  - [ ] ガター、コンテキストメニュー、コメント保存・復元の全導線で同じ扱いにできるか検証する
+- [x] Task: IntelliJ Platform の空ドキュメント位置 API を調査する
+  - [x] `lineCount == 0` のときに `getLineStartOffset`、`addLineHighlighter`、`addBlockElement`、ポップアップ位置計算へ渡せる安全なインデックス・オフセットを確認する
+  - [x] 論理 `ReviewCommentLineRange(1, 1)` を維持しながら、空範囲 `0..-1` を生成しない正規化方法を比較する
+  - [x] ガター、コンテキストメニュー、コメント保存・復元の全導線で同じ扱いにできるか検証する
 
 - [ ] Task: Phase 0 の `evidence_report.md` を作成し、計画を具体化する
   - [ ] 調査結果、再現ログ、対象ファイルと予定変更箇所、テスト方針を `conductor/tracks/56-empty-document-crash-fix_20260804/evidence_report.md` に記録する
