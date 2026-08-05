@@ -22,14 +22,14 @@
   - [x] 証拠に基づき Phase 1 の対象行、テストケース、実装方法を `plan.md` に追記・修正する
   - [x] 証拠レポートと更新済み計画についてユーザーの承認を得る
 
-- [~] Task: Phase 0 Verification & Checkpoint (Refer to `workflow.md`)
+- [x] Task: Phase 0 Verification & Checkpoint (Refer to `workflow.md`)
   - [x] ベースラインとして `.\gradlew.bat test` を実行し、既存テストが成功することを確認する
   - [x] `.\gradlew.bat detekt` を実行し、静的解析結果を確認する
-  - [ ] Task: Conductor - User Manual Verification 'Phase 0 Discovery & Detailed Design' (Protocol in `workflow.md`)
+  - [x] Task: Conductor - User Manual Verification 'Phase 0 Discovery & Detailed Design' (Protocol in `workflow.md`)
   - [x] ユーザーに証拠レポートと Phase 1 計画が期待どおりか確認し、明示的な承認を得る
-  - [ ] Task: Conductor - 'Phase 0 Discovery & Detailed Design' の成果をコミットする
-  - [ ] 変更ファイルを確認し、`conductor(checkpoint): Checkpoint end of Phase 0` 相当のコミットを作成する
-  - [ ] コミット SHA を `plan.md` に記録し、計画更新を別コミットとして記録する
+  - [x] Task: Conductor - 'Phase 0 Discovery & Detailed Design' の成果をコミットする
+  - [x] 変更ファイルを確認し、`conductor(checkpoint): Checkpoint end of Phase 0` 相当のコミット（`c2fe0db`）を作成する
+  - [x] コミット SHA `c2fe0db` を `plan.md` に記録し、計画更新を別コミットとして記録する
 
 ## Phase 1: Empty Document Safety Fix
 
