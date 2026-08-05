@@ -17,16 +17,16 @@
   - [x] 論理 `ReviewCommentLineRange(1, 1)` を維持しながら、空範囲 `0..-1` を生成しない正規化方法を比較する
   - [x] ガター、コンテキストメニュー、コメント保存・復元の全導線で同じ扱いにできるか検証する
 
-- [ ] Task: Phase 0 の `evidence_report.md` を作成し、計画を具体化する
-  - [ ] 調査結果、再現ログ、対象ファイルと予定変更箇所、テスト方針を `conductor/tracks/56-empty-document-crash-fix_20260804/evidence_report.md` に記録する
-  - [ ] 証拠に基づき Phase 1 の対象行、テストケース、実装方法を `plan.md` に追記・修正する
-  - [ ] 証拠レポートと更新済み計画についてユーザーの承認を得る
+- [x] Task: Phase 0 の `evidence_report.md` を作成し、計画を具体化する
+  - [x] 調査結果、再現ログ、対象ファイルと予定変更箇所、テスト方針を `conductor/tracks/56-empty-document-crash-fix_20260804/evidence_report.md` に記録する
+  - [x] 証拠に基づき Phase 1 の対象行、テストケース、実装方法を `plan.md` に追記・修正する
+  - [x] 証拠レポートと更新済み計画についてユーザーの承認を得る
 
-- [ ] Task: Phase 0 Verification & Checkpoint (Refer to `workflow.md`)
-  - [ ] ベースラインとして `.\gradlew.bat test` を実行し、既存テストが成功することを確認する
-  - [ ] `.\gradlew.bat detekt` を実行し、静的解析結果を確認する
+- [~] Task: Phase 0 Verification & Checkpoint (Refer to `workflow.md`)
+  - [x] ベースラインとして `.\gradlew.bat test` を実行し、既存テストが成功することを確認する
+  - [x] `.\gradlew.bat detekt` を実行し、静的解析結果を確認する
   - [ ] Task: Conductor - User Manual Verification 'Phase 0 Discovery & Detailed Design' (Protocol in `workflow.md`)
-  - [ ] ユーザーに証拠レポートと Phase 1 計画が期待どおりか確認し、明示的な承認を得る
+  - [x] ユーザーに証拠レポートと Phase 1 計画が期待どおりか確認し、明示的な承認を得る
   - [ ] Task: Conductor - 'Phase 0 Discovery & Detailed Design' の成果をコミットする
   - [ ] 変更ファイルを確認し、`conductor(checkpoint): Checkpoint end of Phase 0` 相当のコミットを作成する
   - [ ] コミット SHA を `plan.md` に記録し、計画更新を別コミットとして記録する
@@ -34,14 +34,14 @@
 ## Phase 1: Empty Document Safety Fix
 
 - [ ] Task: TDD で Issue 56 の回帰テストを追加する
-  - [ ] 空ファイル・JSON 不在で `ReviewCommentEditorTracker.track` / `refresh` を実行する再現テストを追加し、現状の例外を確認する（Red）
-  - [ ] 空ファイルで `CommentInlayManager.openInputPanel` の位置計算を実行するテストを追加し、同じ空範囲問題を確認する（Red）
-  - [ ] 空ファイルでコメントインレイを追加または復元する位置計算のテストを追加する（Red）
-  - [ ] 非空ファイルの既存テストと JSON 不在時の `ReviewCommentStorage` テストが回帰ケースとして維持されていることを確認する
+  - [ ] `ReviewCommentEditorFileListenerTest.kt` に空文字・JSON 不在で `ReviewCommentEditorTracker.track` を実行し、ガター highlighter が準備されることを確認する再現テストを追加する（Red）
+  - [ ] `CommentInlayManagerTest.kt` に空文字で `openInputPanel(editor, ReviewCommentLineRange(1, 1), ...)` を実行し、入力パネルが作成されることを確認するテストを追加する（Red）
+  - [ ] `CommentInlayManagerTest.kt` に同じ空 editor で保存して block renderer を追加するテストを追加し、`addBlockInlay` の位置計算を検証する（Red）
+  - [ ] `ReviewCommentEditorLineRangeResolverTest.kt` に空ドキュメントが `ReviewCommentLineRange(1, 1)` へ解決される境界テストを追加し、非空ファイルと JSON 不在時の既存テストを維持する
 
 - [ ] Task: 空ドキュメントの最小安全化を実装する
-  - [ ] `ReviewCommentEditorTracker.kt` の行ハイライト位置計算を、論理行 1 と有効なエディタ位置へ安全に正規化する
-  - [ ] `CommentInlayManager.kt` の入力ポップアップ位置とコメントブロックインレイ位置計算を、同じ正規化方針で安全化する
+  - [ ] `ReviewCommentEditorTracker.kt:83-84` の上限を `(document.lineCount - 1).coerceAtLeast(0)` で正規化し、行 0 を `addLineHighlighter` に渡す
+  - [ ] `CommentInlayManager.kt:262-264,351-352` の上限を同じ方針で正規化し、オフセット 0 を popup / block inlay API に渡す
   - [ ] `ReviewCommentLineRange`、JSON スキーマ、ブランチ名ベースの保存処理は変更しない
   - [ ] Red テストを再実行し、空ファイルのガター、コンテキストメニュー、保存・復元の例外が解消されたことを確認する（Green）
 
