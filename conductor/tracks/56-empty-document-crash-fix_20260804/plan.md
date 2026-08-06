@@ -56,7 +56,7 @@
   - [x] Conventional Commits 形式でコード変更をコミットする（`18a8905`、`07622e8`）
   - [x] 完了したタスクの状態と直前のコミット先頭 7 文字を `plan.md` に記録し、計画更新を別コミットする
 
-- [~] Task: Phase 1 Verification & Checkpoint (Refer to `workflow.md`)
+- [x] Task: Phase 1 Verification & Checkpoint (Refer to `workflow.md`)
   - [x] フェーズ開始時点のチェックポイント SHA `c2fe0db` から `git diff --name-only c2fe0db HEAD` を実行し、変更ファイルを確認する
   - [x] 変更された各コードファイルに対応するテストが存在し、Issue 56 の受け入れ条件を検証していることを確認する
   - [x] `.\gradlew.bat test` と `.\gradlew.bat detekt` を実行し、結果を確認する
@@ -67,7 +67,7 @@
   - [x] 非空ファイルで既存の行コメント操作が変わっていないことをユーザーが確認する
   - [x] ユーザーの明示的な手動検証承認を得る
   - [x] Task: Conductor - 'Phase 1 Empty Document Safety Fix' の成果をコミットする
-  - [ ] フェーズチェックポイントコミットを作成し、その SHA を `plan.md` に記録する
+  - [x] フェーズチェックポイントコミット `6b9074d` を作成し、その SHA を `plan.md` に記録する
 
 ## 変更予定ファイル
 
