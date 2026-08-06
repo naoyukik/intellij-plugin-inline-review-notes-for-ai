@@ -33,40 +33,40 @@
 
 ## Phase 1: Empty Document Safety Fix
 
-- [ ] Task: TDD で Issue 56 の回帰テストを追加する
-  - [ ] `ReviewCommentEditorFileListenerTest.kt` に空文字・JSON 不在で `ReviewCommentEditorTracker.track` を実行し、ガター highlighter が準備されることを確認する再現テストを追加する（Red）
-  - [ ] `CommentInlayManagerTest.kt` に空文字で `openInputPanel(editor, ReviewCommentLineRange(1, 1), ...)` を実行し、入力パネルが作成されることを確認するテストを追加する（Red）
-  - [ ] `CommentInlayManagerTest.kt` に同じ空 editor で保存して block renderer を追加するテストを追加し、`addBlockInlay` の位置計算を検証する（Red）
-  - [ ] `ReviewCommentEditorLineRangeResolverTest.kt` に空ドキュメントが `ReviewCommentLineRange(1, 1)` へ解決される境界テストを追加し、非空ファイルと JSON 不在時の既存テストを維持する
+- [x] Task: TDD で Issue 56 の回帰テストを追加する
+  - [x] `ReviewCommentEditorFileListenerTest.kt` に空文字・JSON 不在で `ReviewCommentEditorTracker.track` を実行し、ガター highlighter が準備されることを確認する再現テストを追加する（Red を確認済み）
+  - [x] `CommentInlayManagerTest.kt` に空文字で `openInputPanel(editor, ReviewCommentLineRange(1, 1), ...)` を実行し、入力パネルが作成されることを確認するテストを追加する（Red を確認済み）
+  - [x] `CommentInlayManagerTest.kt` に同じ空 editor で保存して block renderer を追加するテストを追加し、`addBlockInlay` の位置計算を検証する（Red を確認済み）
+  - [x] `ReviewCommentEditorLineRangeResolverTest.kt` に空ドキュメントが `ReviewCommentLineRange(1, 1)` へ解決される境界テストを追加し、非空ファイルと JSON 不在時の既存テストを維持する
 
-- [ ] Task: 空ドキュメントの最小安全化を実装する
-  - [ ] `ReviewCommentEditorTracker.kt:83-84` の上限を `(document.lineCount - 1).coerceAtLeast(0)` で正規化し、行 0 を `addLineHighlighter` に渡す
-  - [ ] `CommentInlayManager.kt:262-264,351-352` の上限を同じ方針で正規化し、オフセット 0 を popup / block inlay API に渡す
-  - [ ] `ReviewCommentLineRange`、JSON スキーマ、ブランチ名ベースの保存処理は変更しない
-  - [ ] Red テストを再実行し、空ファイルのガター、コンテキストメニュー、保存・復元の例外が解消されたことを確認する（Green）
+- [x] Task: 空ドキュメントの最小安全化を実装する（回帰テストコミット: `18a8905`）
+  - [x] `ReviewCommentEditorTracker.kt:83-84` の上限を `(document.lineCount - 1).coerceAtLeast(0)` で正規化し、行 0 を `addLineHighlighter` に渡す
+  - [x] `CommentInlayManager.kt:262-264,351-352` の上限を同じ方針で正規化し、オフセット 0 を popup / block inlay API に渡す
+  - [x] `ReviewCommentLineRange`、JSON スキーマ、ブランチ名ベースの保存処理は変更しない
+  - [x] Red テストを再実行し、空ファイルのガター、コンテキストメニュー、保存・復元の例外が解消されたことを確認する（Green）
 
-- [ ] Task: 回帰確認とコード品質を検証する
-  - [ ] 空ドキュメントと通常の 1 行以上のドキュメントの境界ケースを含む関連テストを実行する
-  - [ ] `.\gradlew.bat test` を実行し、全テストが成功することを確認する
-  - [ ] `.\gradlew.bat detekt` を実行し、静的解析エラーがないことを確認する
-  - [ ] `.\gradlew.bat build` を実行し、プロダクションコードとテストコードがコンパイルされることを確認する
-  - [ ] 新規・変更コードのカバレッジが 80% 以上を満たすか、利用可能なレポートで確認する
-  - [ ] 必要なリファクタリング後に関連テストを再実行する
-  - [ ] Task: Conductor - 'Empty Document Safety Fix' の成果をコミットする
-  - [ ] Conventional Commits 形式でコード変更をコミットする
-  - [ ] 完了したタスクの状態と直前のコミット先頭 7 文字を `plan.md` に記録し、計画更新を別コミットする
+- [x] Task: 回帰確認とコード品質を検証する
+  - [x] 空ドキュメントと通常の 1 行以上のドキュメントの境界ケースを含む関連テストを実行する
+  - [x] `.\gradlew.bat test` を実行し、全テストが成功することを確認する
+  - [x] `.\gradlew.bat detekt` を実行し、静的解析エラーがないことを確認する
+  - [x] `.\gradlew.bat build` を実行し、プロダクションコードとテストコードがコンパイルされることを確認する
+  - [x] 新規・変更コードのカバレッジが 80% 以上を満たすか、利用可能なレポートで確認する（JaCoCo/Kover 未設定のため測定不可）
+  - [x] 必要なリファクタリング後に関連テストを再実行する（追加リファクタリング不要）
+  - [x] Task: Conductor - 'Empty Document Safety Fix' の成果をコミットする
+  - [x] Conventional Commits 形式でコード変更をコミットする（`18a8905`、`07622e8`）
+  - [x] 完了したタスクの状態と直前のコミット先頭 7 文字を `plan.md` に記録し、計画更新を別コミットする
 
-- [ ] Task: Phase 1 Verification & Checkpoint (Refer to `workflow.md`)
-  - [ ] フェーズ開始時点のチェックポイント SHA から `git diff --name-only <previous_checkpoint_sha> HEAD` を実行し、変更ファイルを確認する
-  - [ ] 変更された各コードファイルに対応するテストが存在し、Issue 56 の受け入れ条件を検証していることを確認する
-  - [ ] `.\gradlew.bat test` と `.\gradlew.bat detekt` を実行し、結果を確認する
-  - [ ] `.\gradlew.bat build` を実行し、ビルド成功を確認する
-  - [ ] Task: Conductor - User Manual Verification 'Phase 1 Empty Document Safety Fix' (Protocol in `workflow.md`)
-  - [ ] 空のファイルを開き、IDE ログに `IllegalArgumentException` が出ないことをユーザーが確認する
-  - [ ] 空ファイルでガターまたはコンテキストメニューからコメント入力を開き、コメントを保存できることをユーザーが確認する
-  - [ ] 非空ファイルで既存の行コメント操作が変わっていないことをユーザーが確認する
-  - [ ] ユーザーの明示的な手動検証承認を得る
-  - [ ] Task: Conductor - 'Phase 1 Empty Document Safety Fix' の成果をコミットする
+- [~] Task: Phase 1 Verification & Checkpoint (Refer to `workflow.md`)
+  - [x] フェーズ開始時点のチェックポイント SHA `c2fe0db` から `git diff --name-only c2fe0db HEAD` を実行し、変更ファイルを確認する
+  - [x] 変更された各コードファイルに対応するテストが存在し、Issue 56 の受け入れ条件を検証していることを確認する
+  - [x] `.\gradlew.bat test` と `.\gradlew.bat detekt` を実行し、結果を確認する
+  - [x] `.\gradlew.bat build` を実行し、ビルド成功を確認する
+  - [x] Task: Conductor - User Manual Verification 'Phase 1 Empty Document Safety Fix' (Protocol in `workflow.md`)
+  - [x] 空のファイルを開き、IDE ログに `IllegalArgumentException` が出ないことをユーザーが確認する
+  - [x] 空ファイルでガターまたはコンテキストメニューからコメント入力を開き、コメントを保存できることをユーザーが確認する
+  - [x] 非空ファイルで既存の行コメント操作が変わっていないことをユーザーが確認する
+  - [x] ユーザーの明示的な手動検証承認を得る
+  - [x] Task: Conductor - 'Phase 1 Empty Document Safety Fix' の成果をコミットする
   - [ ] フェーズチェックポイントコミットを作成し、その SHA を `plan.md` に記録する
 
 ## 変更予定ファイル
