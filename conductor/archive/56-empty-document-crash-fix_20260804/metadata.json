@@ -1,0 +1,8 @@
+{
+  "track_id": "56-empty-document-crash-fix_20260804",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-08-04T19:25:00+09:00",
+  "updated_at": "2026-08-04T19:25:00+09:00",
+  "description": "Issue 56: 空ドキュメントのレビューコメント処理で発生するクラッシュを修正する"
+}

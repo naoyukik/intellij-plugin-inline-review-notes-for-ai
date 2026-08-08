@@ -4,6 +4,15 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class ReviewCommentEditorLineRangeResolverTest : BasePlatformTestCase() {
 
+    fun test_empty_document_resolves_to_first_line() {
+        myFixture.configureByText("Empty.txt", "")
+
+        assertEquals(
+            ReviewCommentLineRange(1, 1),
+            ReviewCommentEditorLineRangeResolver.resolve(myFixture.editor),
+        )
+    }
+
     fun test_selection_ending_at_line_boundary_stays_on_starting_line() {
         myFixture.configureByText(
             "Foo.txt",
