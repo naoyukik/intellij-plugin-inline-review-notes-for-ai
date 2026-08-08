@@ -1,8 +1,12 @@
 package com.github.naoyukik.intellijplugininlinereviewnotesforai.editor
 
 import com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.ui.CommentBlockRenderer
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewComment
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.model.ReviewCommentDocument
+import com.github.naoyukik.intellijplugininlinereviewnotesforai.storage.ReviewCommentStorage
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import java.nio.file.Path
 
 class CommentInlayManagerTest : BasePlatformTestCase() {
 
@@ -31,6 +35,33 @@ class CommentInlayManagerTest : BasePlatformTestCase() {
         CommentInlayManager.activeInputPanel(editor)?.saveButton?.doClick()
 
         assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+    }
+
+    fun test_restore_comment_on_empty_file_creates_block_renderer() {
+        myFixture.configureByText("Empty.kt", "")
+
+        val editor = myFixture.editor
+        val storage = ReviewCommentStorage(Path.of(project.basePath!!))
+        storage.save(
+            ReviewCommentDocument(
+                comments = listOf(
+                    ReviewComment(
+                        id = "empty-document-comment",
+                        filePath = "src/Empty.kt",
+                        lineStart = 1,
+                        lineEnd = 1,
+                        comment = "復元されたコメント",
+                        createdAt = "2026-08-08T18:24:00+09:00",
+                    ),
+                ),
+            ),
+        )
+
+        CommentInlayManager.releaseEditor(editor)
+        CommentInlayManager.restoreComments(editor, project, filePath)
+
+        assertTrue(CommentInlayManager.hasBlockRenderer(editor))
+        assertEquals("復元されたコメント", CommentInlayManager.activeBlockRenderer(editor)?.text)
     }
 
     fun test_open_input_panel_creates_input_state() {
