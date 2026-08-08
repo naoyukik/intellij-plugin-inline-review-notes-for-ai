@@ -83,3 +83,8 @@
 - `.\gradlew.bat test`
 - `.\gradlew.bat detekt`
 - `.\gradlew.bat build`
+
+## Phase: Review Fixes
+
+- [x] Task: Apply review suggestions `68caa86`
+  - [x] 空ドキュメントへ JSON コメントを復元する回帰テストを追加する
