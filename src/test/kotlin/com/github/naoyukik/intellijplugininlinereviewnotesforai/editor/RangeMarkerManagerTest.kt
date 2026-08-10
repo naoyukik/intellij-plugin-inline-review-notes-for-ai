@@ -20,6 +20,30 @@ class RangeMarkerManagerTest : BasePlatformTestCase() {
         assertEquals(4, resolved.lineEnd)
     }
 
+    fun test_register_on_empty_document_resolves_to_first_line() {
+        myFixture.configureByText("empty.kt", "")
+        val document = myFixture.editor.document
+
+        manager.register("empty-register", document, ReviewCommentLineRange(1, 1))
+
+        val resolved = manager.resolveLineRange("empty-register", document)
+        assertNotNull(resolved)
+        assertEquals(1, resolved!!.lineStart)
+        assertEquals(1, resolved.lineEnd)
+    }
+
+    fun test_replace_on_empty_document_resolves_to_first_line() {
+        myFixture.configureByText("empty.kt", "")
+        val document = myFixture.editor.document
+
+        manager.replace("empty-replace", document, ReviewCommentLineRange(1, 1))
+
+        val resolved = manager.resolveLineRange("empty-replace", document)
+        assertNotNull(resolved)
+        assertEquals(1, resolved!!.lineStart)
+        assertEquals(1, resolved.lineEnd)
+    }
+
     fun test_replaces_marker_for_same_id() {
         myFixture.configureByText("test.kt", "line1\nline2\nline3\nline4\nline5\n")
         val document = myFixture.editor.document
