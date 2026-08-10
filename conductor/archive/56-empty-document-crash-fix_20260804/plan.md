@@ -88,3 +88,18 @@
 
 - [x] Task: Apply review suggestions `68caa86`
   - [x] 空ドキュメントへ JSON コメントを復元する回帰テストを追加する
+
+## Phase: CI Failure Correction
+
+- [x] Task: CI で発生した空ドキュメント失敗の原因と修正方針を調査する
+  - [x] `CommentInlayManagerTest.test_save_comment_on_empty_file_creates_block_renderer` と `test_restore_comment_on_empty_file_creates_block_renderer` が、`RangeMarkerManager.createMarker` の `coerceIn(0, document.lineCount - 1)` で `IllegalArgumentException` になることを確認する
+  - [x] 保存経路の `CommentInlayManager.saveComment` は `RangeMarkerManager.replace` を、復元経路の `restoreComments` は `register` を呼び、両方が未修正の marker 位置計算を通ることを確認する
+  - [x] 修正方針は `RangeMarkerManager` の既存責務内で行インデックス上限を空ドキュメントでも `0` に正規化する最小変更とする。ストレージ、モデル、論理行範囲 `1..1` は変更しない
+
+- [x] Task: `RangeMarkerManager` の空ドキュメント位置計算を修正する（コードコミット: `535f9f3`）
+  - [x] TDD の Red として `RangeMarkerManagerTest` に、空ドキュメントへの `register` と `replace` が例外なく完了し、`resolveLineRange` が `1..1` を返す回帰テストを追加する
+  - [x] `RangeMarkerManager.kt:124-133` の `createMarker` で `maxLineIndex = (document.lineCount - 1).coerceAtLeast(0)` を算出し、開始・終了行を同じ上限で正規化する。空ドキュメントではオフセット `0..0` の marker を作成する
+  - [x] `CommentInlayManagerTest` の保存・復元回帰テストを Green にし、保存経路と JSON 復元経路の両方で block renderer が作成されることを確認する
+  - [x] 非空ドキュメントの既存行追跡テストと JSON 保存仕様を維持することを確認する
+  - [x] `\.\gradlew.bat test --tests com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.RangeMarkerManagerTest --tests com.github.naoyukik.intellijplugininlinereviewnotesforai.editor.CommentInlayManagerTest`、`\.\gradlew.bat check`、`\.\gradlew.bat detekt`、`\.\gradlew.bat build` を実行する（成功。増分生成物の一時的な `NoSuchMethodError` は再コンパイル後に解消）
+  - [x] 検証結果を記録し、修正コードと計画更新を別の Conventional Commits として記録する
