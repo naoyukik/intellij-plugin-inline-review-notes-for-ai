@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-11
+
 ### Added
 
 - Track comment line positions when lines are inserted or deleted in the IntelliJ editor, and synchronize updated line numbers to JSON on save
@@ -39,7 +41,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/naoyukik/intellij-plugin-inline-review-notes-for-ai/compare/0.0.1...0.1.0
