@@ -80,7 +80,8 @@ object ReviewCommentEditorTracker {
 
         state.highlighter?.let { editor.markupModel.removeHighlighter(it) }
 
-        val startLineIndex = (lineRange.startLine - 1).coerceIn(0, editor.document.lineCount - 1)
+        val maxLineIndex = (editor.document.lineCount - 1).coerceAtLeast(0)
+        val startLineIndex = (lineRange.startLine - 1).coerceIn(0, maxLineIndex)
         val highlighter = editor.markupModel.addLineHighlighter(
             startLineIndex,
             HighlighterLayer.ADDITIONAL_SYNTAX,

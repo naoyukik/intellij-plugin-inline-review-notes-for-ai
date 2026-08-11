@@ -9,6 +9,10 @@
 - Track comment line positions when lines are inserted or deleted in the IntelliJ editor, and synchronize updated line numbers to JSON on save
   - Limitation: Line tracking does not support source file changes made outside the IntelliJ editor, such as by another application or a Git operation
 
+### Fixed
+
+- Prevent crashes when using comments in empty documents without a corresponding JSON file, including gutter actions, input popups, comment inlays, and comment restoration
+
 ## [0.3.0] - 2026-07-26
 
 ### Added

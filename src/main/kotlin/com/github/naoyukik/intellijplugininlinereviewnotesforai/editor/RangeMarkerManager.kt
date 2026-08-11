@@ -122,8 +122,9 @@ class RangeMarkerManager : Disposable {
     }
 
     private fun createMarker(document: Document, lineRange: ReviewCommentLineRange): RangeMarker {
-        val startLineIndex = (lineRange.startLine - 1).coerceIn(0, document.lineCount - 1)
-        val endLineIndex = (lineRange.endLine - 1).coerceIn(0, document.lineCount - 1)
+        val maxLineIndex = (document.lineCount - 1).coerceAtLeast(0)
+        val startLineIndex = (lineRange.startLine - 1).coerceIn(0, maxLineIndex)
+        val endLineIndex = (lineRange.endLine - 1).coerceIn(0, maxLineIndex)
         val marker = document.createRangeMarker(
             document.getLineStartOffset(startLineIndex),
             document.getLineEndOffset(endLineIndex),

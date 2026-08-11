@@ -3,47 +3,21 @@
 ## Guiding Principles
 
 1. **The Plan is the Source of Truth:** All work must be tracked in `plan.md`
-2. **The Tech Stack is Deliberate:** Changes to the tech stack must be documented in `tech-stack.md` *before* implementation
+2. **The Tech Stack is Deliberate:** Changes to the tech stack must be documented in `tech-stack.md` *before*
+   implementation
 3. **Test-Driven Development:** Write unit tests before implementing functionality
 4. **High Code Coverage:** Aim for >80% code coverage for all modules
 5. **User Experience First:** Every decision should prioritize user experience
-6. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use `CI=true` for watch-mode tools (tests, linters) to ensure single execution.
-7. **Track Naming:** The prefix number for the track name (and its directory name) should match the corresponding GitHub issue number (ticket number) (e.g., for Issue #3, use `3-xxx`).
+6. **Non-Interactive & CI-Aware:** Prefer non-interactive commands. Use `CI=true` for watch-mode tools (tests, linters)
+   to ensure single execution.
 
-## Repository Rules
+## Track Naming & Branching Convention
 
-### Language Policy
-
-- Write `spec.md`, `plan.md`, `workflow.md`, reports, and AI conversations in Japanese.
-- Write in-code comments in Japanese only when they explain complex logic.
-- State conclusions first.
-
-### Testing Requirements
-
-- The minimum target is 80% or higher coverage.
-- Provide matching unit tests for each feature.
-- After changes, verify the test results directly and do not treat the task as complete based on inference alone.
-- Run the project's configured static analysis task before each task commit. If `detekt` is available in this repository, run `./gradlew detekt`.
-
-### Commit Strategy
-
-- Commit after each task is completed.
-- Follow the Conventional Commits rules defined in `AGENTS.md` for commit messages.
-
-### Verification Principles
-
-- Do not complete tasks that require "user manual verification" unless the user has explicitly approved them.
-- Even if the implementation looks correct, treat it as incomplete until the behavior has been verified.
-- Do not prioritize efficiency over the prescribed process.
-
-### Code Exploration Tools
-
-IMPORTANT: When applicable, prefer using JetBrains MCP and intellij-index MCP tools for code navigation and refactoring.
-
-### References
-
-- Kotlin Reference: https://kotlinlang.org/docs/
-- IntelliJ Plugin Reference: https://plugins.jetbrains.com/docs/
+1.  **Track 名は英語**で命名する。日本語名は使用しない。
+2.  **Track 名の接頭辞はチケット番号（GitHub Issue 番号）**とする。
+    形式は `<チケット番号>-<英語スラグ>` とし、例は `1-project-init` である。
+3.  **Track 名が確定した時点で、spec.md / plan.md をコミットする前に**、Track 名と同名のブランチを作成する。
+    以降のコミットは全てそのブランチ上で行う。例: `1-project-init`。
 
 ## Task Workflow
 
@@ -55,196 +29,284 @@ All tasks follow a strict lifecycle:
 
 2. **Mark In Progress:** Before beginning work, edit `plan.md` and change the task from `[ ]` to `[~]`
 
-3. **Write Failing Tests (Red Phase):**
-   - Create a new test file for the feature or bug fix.
-   - Write one or more unit tests that clearly define the expected behavior and acceptance criteria for the task.
-   - **CRITICAL:** Run the tests and confirm that they fail as expected. This is the "Red" phase of TDD. Do not proceed until you have failing tests.
+3. **Investigate (Phase 0):** Before implementing, investigate the task thoroughly.
 
-4. **Implement to Pass Tests (Green Phase):**
-   - Write the minimum amount of application code necessary to make the failing tests pass.
-   - Run the test suite again and confirm that all tests now pass. This is the "Green" phase.
+- Read the track's `spec.md` and the relevant sections of `plan.md`.
+- Analyze existing code, architecture rules (`architecture_rules.md`), and code style guides to determine the
+  implementation approach.
+- Confirm the implementation strategy, then proceed to the TDD cycle.
 
-5. **Refactor (Optional but Recommended):**
-   - With the safety of passing tests, refactor the implementation code and the test code to improve clarity, remove duplication, and enhance performance without changing the external behavior.
-   - Rerun tests to ensure they still pass after refactoring.
+4. **Write Failing Tests (Red Phase):**
 
-6. **Verify Coverage and Static Analysis:** Run coverage reports using the project's chosen tools and execute the project's configured static analysis task. If `detekt` is available, run `./gradlew detekt`. For example, in a Python project, this might look like:
-   ```bash
-   pytest --cov=app --cov-report=html
-   ```
-   Target: >80% coverage for new code. The specific tools and commands will vary by language and framework.
+- Create a new test file for the feature or bug fix.
+- Write one or more unit tests that clearly define the expected behavior and acceptance criteria for the task.
+- **CRITICAL:** Run the tests and confirm that they fail as expected. This is the "Red" phase of TDD. Do not proceed
+  until you have failing tests.
 
-7. **Document Deviations:** If implementation differs from tech stack:
-   - **STOP** implementation
-   - Update `tech-stack.md` with new design
-   - Add dated note explaining the change
-   - Resume implementation
+5. **Implement to Pass Tests (Green Phase):**
 
-8. **Commit Code Changes:**
-   - Stage all code changes related to the task.
-   - Propose a clear, concise commit message e.g, `feat(ui): Create basic HTML structure for calculator`.
-   - Perform the commit only after tests and static analysis pass.
+- Write the minimum amount of application code necessary to make the failing tests pass.
+- Run the test suite again and confirm that all tests now pass. This is the "Green" phase.
 
-9. **Get and Record Task Commit SHA:**
-     - **Step 10.1: Update Plan:** Read `plan.md`, find the line for the completed task, update its status from `[~]` to `[x]`, and append the first 7 characters of the *just-completed commit's* commit hash.
-     - **Step 10.2: Write Plan:** Write the updated content back to `plan.md`.
+6. **Refactor (Optional but Recommended):**
 
-10. **Commit Plan Update:**
-    - **Action:** Stage the modified `plan.md` file.
-    - **Action:** Commit this change with a descriptive message (e.g., `conductor(plan): Mark task 'Create user model' as complete`).
+- With the safety of passing tests, refactor the implementation code and the test code to improve clarity, remove
+  duplication, and enhance performance without changing the external behavior.
+- Rerun tests to ensure they still pass after refactoring.
 
-### Repository-Specific Task Flow
+7. **Verify Coverage:** Run coverage reports using the project's chosen tools. For example, in a TypeScript project,
+   this might look like: `pnpm vitest run --coverage` Target: >80% coverage for new code. The specific tools and
+   commands will vary by language and framework.
 
-For this repository, the work should usually proceed like this:
+8. **Document Deviations:** If implementation differs from tech stack:
 
-1. **Phase 0 - Research and Planning:** Use `autonomous-researcher` to inspect the relevant code, create `evidence_report.md`, and rewrite the remaining items in `plan.md` so they name the concrete files, expected line ranges, and intended changes.
-2. **Per-Task Cycle:** For each implementation task, repeat `実装 -> テスト -> 静的解析 -> コミット`.
-3. **Phase Closeout:** Every phase must end with `Conductor - ユーザー手動検証` and then the phase checkpoint workflow.
+- **STOP** implementation
+- Update `tech-stack.md` with new design
+- Add dated note explaining the change
+- Resume implementation
 
-### Standard Phase Structure
+9. **Commit Code Changes (Phase Boundary):** Commits are made per phase, not per task.
 
-When a track uses phased delivery, keep the phase structure explicit:
+- Stage all code changes completed during the phase.
+- Propose a clear, concise commit message in Japanese following the Conventional Commits format, e.g.
+  `feat: ノード作成機能を追加`.
+- Perform the commit.
+- **Do NOT** create empty checkpoint commits. The last functional commit of the phase is the phase commit.
 
-- Phase 0 is Discovery & Detailed Design.
-- Phase 0 should include research, plan refinement, environment confirmation, and the manual verification task.
-- After the evidence_report for Phase 0 has been approved by the user, revise and supplement the tasks for Phase 1 and beyond based on the evidence_report as needed.
-- Later phases should contain only the concrete implementation tasks needed for the feature.
-- Each phase closes with `./gradlew test`, the configured static analysis task such as `./gradlew detekt` when available,  and manual verification before committing.
+10. **Attach Task Summary with Git Notes:**
+
+- **Step 10.1: Get Commit Hash:** Obtain the hash of the *just-completed commit* (`git log -1 --format="%H"`).
+- **Step 10.2: Draft Note Content:** Create a detailed summary for the completed task. This should include the task
+  name, a summary of changes, a list of all created/modified files, and the core "why" for the change.
+- **Step 10.3: Attach Note:** Use the `git notes` command to attach the summary to the commit. `git notes add -m "<note content>"
+        <commit_hash>`
+
+11. **Update Plan Status:** Read `plan.md`, find the line for the completed task, and update its status from `[~]` to
+    `[x]`. Do **NOT** append commit SHAs to `plan.md` and do **NOT** create a separate commit for the plan update.
+
+### Task Correction & Plan Amendment Workflows
+
+When an implemented task or phase requires corrections, amendments, or additions, follow these standard workflows to
+maintain plan integrity and avoid untracked code drift:
+
+1. **In-Flight Refinements:** If minor gaps are found while a task is actively in-progress (`[~]`), make the adjustments
+   directly in the active implementation stream and ensure passing tests before committing.
+2. **Code Review Corrections (`conductor-review`):** If issues are identified during or after a code review, instruct
+   the agent to review your changes (e.g., *"run a review"* or triggering the action manually in compatible clients).
+   The review agent will automatically append a `Review Fixes` phase to `plan.md` so that correction tasks are formally
+   tracked and checkpointed.
+3. **Logical State Reversions (`conductor-revert`):** If a task implementation is fundamentally flawed or needs to be
+   redone, instruct the agent to revert the changes (e.g., *"revert the last task"* or triggering the action manually in
+   compatible clients). This safely rolls back associated git commits and resets the task state in `plan.md` back to
+   pending `[ ]` to allow a clean restart.
 
 ### Phase Completion Verification and Checkpointing Protocol
 
 **Trigger:** This protocol is executed immediately after a task is completed that also concludes a phase in `plan.md`.
 
-1.  **Announce Protocol Start:** Inform the user that the phase is complete and the verification and checkpointing protocol has begun.
+1. **Announce Protocol Start:** Inform the user that the phase is complete and the verification and checkpointing
+   protocol has begun.
 
-2.  **Ensure Test Coverage for Phase Changes:**
-    -   **Step 2.1: Determine Phase Scope:** To identify the files changed in this phase, you must first find the starting point. Read `plan.md` to find the Git commit SHA of the *previous* phase's checkpoint. If no previous checkpoint exists, the scope is all changes since the first commit.
-    -   **Step 2.2: List Changed Files:** Execute `git diff --name-only <previous_checkpoint_sha> HEAD` to get a precise list of all files modified during this phase.
-    -   **Step 2.3: Verify and Create Tests:** For each file in the list:
-        -   **CRITICAL:** First, check its extension. Exclude non-code files (e.g., `.json`, `.md`, `.yaml`).
-        -   For each remaining code file, verify a corresponding test file exists.
-        -   If a test file is missing, you **must** create one. Before writing the test, **first, analyze other test files in the repository to determine the correct naming convention and testing style.** The new tests **must** validate the functionality described in this phase's tasks (`plan.md`).
+2. **Ensure Test Coverage for Phase Changes:**
 
-3.  **Execute Automated Tests and Static Analysis with Proactive Debugging:**
-    -   Before execution, you **must** announce the exact shell command or commands you will use to run the tests and static analysis.
-    -   **Example Announcement:** "I will now run the automated test suite and static analysis to verify the phase. **Commands:** `./gradlew test` and `./gradlew detekt`"
-    -   Execute the announced commands.
-    -   If tests fail, you **must** inform the user and begin debugging. You may attempt to propose a fix a **maximum of two times**. If the tests still fail after your second proposed fix, you **must stop**, report the persistent failure, and ask the user for guidance.
+- **Step 2.1: Determine Phase Scope:** To identify the files changed in this phase, you must first find the starting
+  point. Use `git log --oneline`
+  to find the last commit of the *previous* phase. If no previous phase commit exists, the scope is all changes since
+  the first commit.
+- **Step 2.2: List Changed Files:** Execute `git diff --name-only
+        <previous_checkpoint_sha> HEAD` to get a precise list of all files modified during this phase.
+- **Step 2.3: Verify and Create Tests:** For each file in the list:
+    - **CRITICAL:** First, check its extension. Exclude non-code files (e.g., `.json`, `.md`, `.yaml`).
+    - For each remaining code file, verify a corresponding test file exists.
+    - If a test file is missing, you **must** create one. Before writing the test, **first, analyze other test files in
+      the repository to determine the correct naming convention and testing style.** The new tests **must**
+      validate the functionality described in this phase's tasks (`plan.md`).
 
-4.  **Propose a Detailed, Actionable Manual Verification Plan:**
-    -   **CRITICAL:** To generate the plan, first analyze `product.md`, `product-guidelines.md`, and `plan.md` to determine the user-facing goals of the completed phase.
-    -   **You must generate** a step-by-step plan that walks the user through the verification process.
+3. **Execute Automated Tests with Proactive Debugging:**
 
-5.  **Await Explicit User Feedback:**
-    -   After presenting the detailed plan, ask the user for confirmation: "**Does this meet your expectations? Please confirm with yes or provide feedback on what needs to be changed.**"
-    -   **PAUSE** and await the user's response. Do not proceed without an explicit yes or confirmation.
+- Before execution, you **must** announce the exact shell command you will use to run the tests.
+- **Example Announcement:** "I will now run the automated test suite to verify the phase. **Command:**
+  `CI=true npm test`"
+- Execute the announced command.
+- If tests fail, you **must** inform the user and begin debugging. You may attempt to propose a fix a **maximum of two
+  times**. If the tests still fail after your second proposed fix, you **must stop**, report the persistent failure,
+  and ask the user for guidance.
 
-6.  **Create Checkpoint Commit:**
-    -   Stage all changes. If no changes occurred in this step, proceed with an empty commit.
-    -   Perform the commit with a clear and concise message (e.g., `conductor(checkpoint): Checkpoint end of Phase X`).
+4. **Propose a Detailed, Actionable Manual Verification Plan:**
 
-## Quality Gates
+- **CRITICAL:** To generate the plan, first analyze `product.md`,
+  `product-guidelines.md`, and `plan.md` to determine the user-facing goals of the completed phase.
+- You **must** generate a step-by-step plan that walks the user through the verification process, including any
+  necessary commands and specific, expected outcomes.
+- The plan you present to the user **must** follow this format:
+
+  **For a Frontend Change:** ``` The automated tests have passed. For manual verification, please follow these steps:
+
+  **Manual Verification Steps:** 1. **Start the development server with the command:** `npm run dev` 2. **Open your
+  browser to:**
+  `http://localhost:3000` 3. **Confirm that you see:** The new user profile page, with the user's name and email
+  displayed correctly. ```
+
+  **For a Backend Change:** ``` The automated tests have passed. For manual verification, please follow these steps:
+
+  **Manual Verification Steps:** 1. **Ensure the server is running.** 2. **Execute the following command in your
+  terminal:** `curl -X POST
+        http://localhost:8080/api/v1/users -d '{"name": "test"}'` 3. **Confirm that you receive:** A JSON response with
+  a status of `201 Created`. ```
+
+5. **Await Explicit User Feedback:**
+
+- After presenting the detailed plan, ask the user for confirmation:
+  "**Does this meet your expectations? Please confirm with yes or provide feedback on what needs to be changed.**"
+- **PAUSE** and await the user's response. Do not proceed without an explicit yes or confirmation.
+
+6. **Identify Target Commit for Report:**
+
+- Do NOT create a new empty commit for checkpointing.
+- Identify the hash of the last functional commit made during this phase. This will be the target for the
+  verification
+  report.
+
+7. **Attach Auditable Verification Report using Git Notes:**
+
+- **Step 7.1: Draft Note Content:** Create a detailed verification report including the automated test command, the
+  manual verification steps, and the user's confirmation.
+- **Step 7.2: Attach Note:** Use the `git notes` command to attach the full report to the target commit identified in
+  step 6.
+
+8. **Update Plan Status:** Update the completed phase's tasks in `plan.md` from
+   `[~]` to `[x]`. Do **NOT** append checkpoint SHAs and do **NOT** create a separate commit for the plan update.
+
+9. **Announce Completion:** Inform the user that the phase is complete, with the detailed verification report attached
+   as a git note to the last functional commit of the phase.
+
+### Quality Gates
 
 Before marking any task complete, verify:
 
-- [ ] All tests pass
-- [ ] Code coverage meets requirements (>80%)
-- [ ] Code follows project's code style guidelines (as defined in `code_styleguides/`)
-- [ ] All public functions/methods are documented (e.g., docstrings, JSDoc, GoDoc)
-- [ ] Type safety is enforced (e.g., type hints, TypeScript types, Go types)
-- [ ] No linting or static analysis errors (using the project's configured tools)
-- [ ] Documentation updated if needed
-- [ ] No security vulnerabilities introduced
+-   [ ] All tests pass
+-   [ ] Code coverage meets requirements (>80%)
+-   [ ] Code follows project's code style guidelines (as defined in
+    `code_styleguides/`)
+-   [ ] All public functions/methods are documented (e.g., docstrings, JSDoc, GoDoc)
+-   [ ] Type safety is enforced (e.g., type hints, TypeScript types, Go types)
+-   [ ] No linting or static analysis errors (using the project's configured tools)
+-   [ ] Works correctly on mobile (if applicable)
+-   [ ] Documentation updated if needed
+-   [ ] No security vulnerabilities introduced
 
 ## Development Commands
 
 ### Setup
+
 ```bash
-./gradlew build
+pnpm install
 ```
 
 ### Daily Development
+
 ```bash
-./gradlew test
+pnpm dev          # Vite 開発サーバー起動
+pnpm test         # Vitest テスト実行（CI=true で単発実行）
+pnpm lint         # ESLint 実行
 ```
 
 ### Before Committing
+
 ```bash
-./gradlew test
-./gradlew detekt
-./gradlew build
+CI=true pnpm test && pnpm lint
 ```
 
 ## Testing Requirements
 
 ### Unit Testing
+
 - Every module must have corresponding tests.
 - Use appropriate test setup/teardown mechanisms (e.g., fixtures, beforeEach/afterEach).
 - Mock external dependencies.
 - Test both success and failure cases.
-- Keep the feature-level tests aligned with the task in `plan.md`.
 
 ### Integration Testing
+
 - Test complete user flows
 - Verify database transactions
 - Test authentication and authorization
 - Check form submissions
 
-## Track Management
+### Mobile Testing
 
-### Track Creation
-
-1. Register the track in `conductor/tracks.md`.
-2. Create `conductor/tracks/<track_id>/`.
-3. Place `index.md`, `spec.md`, `plan.md`, and `metadata.json` in that folder.
-4. Create a Git branch whose name includes `<track_id>`.
-
-### Track Execution
-
-- Use the track's `plan.md` as the source of truth.
-- Keep track names aligned with the issue number prefix convention.
-- Update the plan as work changes, instead of relying on memory or chat history.
+- Test on actual iPhone when possible
+- Use Safari developer tools
+- Test touch interactions
+- Verify responsive layouts
+- Check performance on 3G/4G
 
 ## Code Review Process
 
 ### Self-Review Checklist
+
 Before requesting review:
 
 1. **Functionality**
-   - Feature works as specified
-   - Edge cases handled
-   - Error messages are user-friendly
+
+- Feature works as specified
+- Edge cases handled
+- Error messages are user-friendly
 
 2. **Code Quality**
-   - Follows style guide
-   - DRY principle applied
-   - Clear variable/function names
-   - Appropriate comments
+
+- Follows style guide
+- DRY principle applied
+- Clear variable/function names
+- Appropriate comments
 
 3. **Testing**
-   - Unit tests comprehensive
-   - Integration tests pass
-   - Coverage adequate (>80%)
+
+- Unit tests comprehensive
+- Integration tests pass
+- Coverage adequate (>80%)
 
 4. **Security**
-   - No hardcoded secrets
-   - Input validation present
-   - SQL injection prevented
-   - XSS protection in place
+
+- No hardcoded secrets
+- Input validation present
+- SQL injection prevented
+- XSS protection in place
 
 5. **Performance**
-   - Database queries optimized
-   - Images optimized
-   - Caching implemented where needed
+
+- Database queries optimized
+- Images optimized
+- Caching implemented where needed
+
+6. **Mobile Experience**
+
+- Touch targets adequate (44x44px)
+- Text readable without zooming
+- Performance acceptable on mobile
+- Interactions feel native
 
 ## Commit Guidelines
 
 ### Message Format
+
 ```
 <type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+
+Co-Authored-By: {AI Trailer}
 ```
 
+### Language
+
+- Commit messages MUST be written in Japanese.
+- The body and description follow the project's development style (だ・である調).
+
 ### Types
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
@@ -252,6 +314,21 @@ Before requesting review:
 - `refactor`: Code change that neither fixes a bug nor adds a feature
 - `test`: Adding missing tests
 - `chore`: Maintenance tasks
+
+### Co-Authored-By
+
+- **Co-Authored-By: {AI Trailer}** MUST be appended at the end of every commit message to indicate AI-generated content.
+
+### Examples
+
+```bash
+git commit -m "feat: ノード作成機能を追加
+
+Co-Authored-By: {AI Trailer}"
+git commit -m "fix: import時にノード位置を保持
+
+Co-Authored-By: {AI Trailer}"
+```
 
 ## Definition of Done
 
@@ -266,6 +343,62 @@ A task is complete when:
 7. Implementation notes added to `plan.md`
 8. Changes committed with proper message
 9. Git note with task summary attached to the commit
+
+## Emergency Procedures
+
+### Critical Bug in Production
+
+1. Create hotfix branch from main
+2. Write failing test for bug
+3. Implement minimal fix
+4. Test thoroughly including mobile
+5. Deploy immediately
+6. Document in plan.md
+
+### Data Loss
+
+1. Stop all write operations
+2. Restore from latest backup
+3. Verify data integrity
+4. Document incident
+5. Update backup procedures
+
+### Security Breach
+
+1. Rotate all secrets immediately
+2. Review access logs
+3. Patch vulnerability
+4. Notify affected users (if any)
+5. Document and update security procedures
+
+## Deployment Workflow
+
+### Pre-Deployment Checklist
+
+-   [ ] All tests passing
+-   [ ] Coverage >80%
+-   [ ] No linting errors
+-   [ ] Mobile testing complete
+-   [ ] Environment variables configured
+-   [ ] Database migrations ready
+-   [ ] Backup created
+
+### Deployment Steps
+
+1. Merge feature branch to main
+2. Tag release with version
+3. Push to deployment service
+4. Run database migrations
+5. Verify deployment
+6. Test critical paths
+7. Monitor for errors
+
+### Post-Deployment
+
+1. Monitor analytics
+2. Check error logs
+3. Gather user feedback
+4. Plan next iteration
 
 ## Continuous Improvement
 

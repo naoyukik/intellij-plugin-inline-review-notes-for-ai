@@ -302,8 +302,9 @@ object CommentInlayManager {
         lineRange: ReviewCommentLineRange,
         renderer: EditorCustomElementRenderer,
     ): Inlay<*>? {
+        val maxLineIndex = (editor.document.lineCount - 1).coerceAtLeast(0)
         val offset = editor.document.getLineStartOffset(
-            (lineRange.startLine - 1).coerceIn(0, editor.document.lineCount - 1),
+            (lineRange.startLine - 1).coerceIn(0, maxLineIndex),
         )
         val inlay = editor.inlayModel.addBlockElement(
             offset,
@@ -407,7 +408,8 @@ private fun createPopupLocation(
     editor: Editor,
     lineRange: ReviewCommentLineRange,
 ): RelativePoint {
-    val lineIndex = (lineRange.startLine - 1).coerceIn(0, editor.document.lineCount - 1)
+    val maxLineIndex = (editor.document.lineCount - 1).coerceAtLeast(0)
+    val lineIndex = (lineRange.startLine - 1).coerceIn(0, maxLineIndex)
     val visualPosition = editor.offsetToVisualPosition(editor.document.getLineStartOffset(lineIndex))
     val point = editor.visualPositionToXY(visualPosition)
     point.translate(0, editor.lineHeight)
